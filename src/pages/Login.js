@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
 
-export default function App() {
+export function Login() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
