@@ -1,28 +1,84 @@
-import React from 'react';
-import { StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+} from 'react-native';
 
-export function Login() {
+export function Login({ navigation }) {
+  const [hideTexts, setHideTexts] = useState(false);
+
+  const handleInputFocus = () => {
+    setHideTexts(true);
+  };
+
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setHideTexts(false); // Mostra os textos quando o teclado é fechado
+      }
+    );
+
+    return () => {
+      keyboardDidHideListener.remove(); // Remove o listener quando o componente é desmontado
+    };
+  }, []);
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={{ height: 50 }}></View>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={[styles.containerform, {marginBottom: 50} ]}
+        style={[styles.containerform, { marginBottom: 50 }]}
       >
-        <Text style={styles.nomeempresa}><Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes</Text>
+        <Text style={styles.nomeempresa}>
+          <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
+        </Text>
         <Text style={styles.textlabel}>Email</Text>
-        <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
+        <TextInput
+          selectionColor={'#FF7A00'}
+          style={styles.input}
+          onFocus={handleInputFocus}
+        ></TextInput>
         <Text style={styles.textlabel}>Senha</Text>
-        <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <TouchableOpacity style={styles.botaologin}><Text style={styles.textobotao}>ENTRAR</Text></TouchableOpacity>
+        <TextInput
+          selectionColor={'#FF7A00'}
+          style={styles.input}
+          onFocus={handleInputFocus}
+        ></TextInput>
+        <TouchableOpacity style={styles.botaologin}>
+          <Text style={styles.textobotao}>ENTRAR</Text>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
       <View>
-        <Text style={{ textAlign: 'center', fontSize: 15 }}>Não possui conta?</Text>
-        <Text style={{ textAlign: 'center', fontSize: 15 }}>Cadastre-se</Text>
+        {!hideTexts && (
+          <>
+            <Text style={{ textAlign: 'center', fontSize: 15 }}>
+              Não possui conta?
+            </Text>
+            <Text style={{ textAlign: 'center', fontSize: 15 }}>Cadastre-se</Text>
+          </>
+        )}
         <View style={styles.botoesinf}>
-          <TouchableOpacity style={styles.botaofretes}><Text style={styles.botfretestexto}>Procuro</Text><Text style={styles.botfretestexto}>Fretes</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.botaocadastro}><Text style={styles.botfretestexto}>Cadastrar</Text><Text style={styles.botfretestexto}>Fretes</Text></TouchableOpacity>
+          <TouchableOpacity
+            style={styles.botaofretes}
+            onPress={() => navigation.navigate('Cadastro')}
+          >
+            <Text style={styles.botfretestexto}>Procuro</Text>
+            <Text style={styles.botfretestexto}>Fretes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.botaocadastro}>
+            <Text style={styles.botfretestexto}>Cadastrar</Text>
+            <Text style={styles.botfretestexto}>Fretes</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

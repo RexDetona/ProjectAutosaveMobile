@@ -1,4 +1,5 @@
 import Rotas from './src/rotas';
+import { StyleSheet } from 'react-native';
 
 
 

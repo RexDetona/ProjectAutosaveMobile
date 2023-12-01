@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StatusBar, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
 
-export function Cadastro({ navigation }) {
+export function Cadastro2({ navigation }) {
   return (
         <View>
                 <View style={styles.container}>
@@ -15,19 +15,19 @@ export function Cadastro({ navigation }) {
         <Text style={styles.textDesc}>Cadastre-se para conseguir os melhores fretes para seu caminhão</Text>
         <Text style={styles.textlabel}>NÃO TEM ESPAÇO NA TELA</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>Email</Text>
+        <Text style={styles.textlabel}>Nome Completo</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>Senha</Text>
+        <Text style={styles.textlabel}>Categoria CNH</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>CPF</Text>
+        <Text style={styles.textlabel}>Cod CNH</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>Sexo</Text>
+        <Text style={styles.textlabel}>Data de Emissão</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>Telefone</Text>
+        <Text style={styles.textlabel}>Estado Expeditor</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <Text style={styles.textlabel}>Cidade Residencial</Text>
+        <Text style={styles.textlabel}>Placa do veiculo</Text>
         <TextInput selectionColor={'#FF7A00'} style={styles.input}></TextInput>
-        <TouchableOpacity onPress={() => navigation.navigate('Cadastro2')} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Cadastro3')} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>
       </KeyboardAvoidingView>
     </View>
         </View>
