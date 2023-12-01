@@ -11,7 +11,6 @@ Este é um projeto que visa criar um aplicativo de fretagem utilizando React Nat
 ## Tecnologias Utilizadas
 
 - **React Native:** Utilizado para o desenvolvimento da aplicação móvel, oferecendo uma experiência nativa para usuários de dispositivos iOS e Android.
-- **Node.js:** Utilizado para a construção do backend da aplicação, gerenciando as requisições, lógica de negócio e interações com o banco de dados.
 
 ## Instalação e Uso
 
