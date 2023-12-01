@@ -41,7 +41,7 @@ Contribuições são bem-vindas! Se você deseja contribuir com este projeto, si
 
 ## Autor
 
-- [Gustavo Domingues da Silva] - [(mailto:contato.gustavo.silva02@gmail.com)]
+- [Gustavo Domingues da Silva] - [Enviar um email](mailto:contato.gustavo.silva02@gmail.com)
 - [João Elias Bernardelli] - [A definir]
 - [Luan Gabriel Moraes] - [A definir]
 - [Matheus Bonfim] - [A definir]
