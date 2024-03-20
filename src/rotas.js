@@ -13,7 +13,7 @@ const Stack = createNativeStackNavigator();
 export default function Rotas() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Cadastro" component={Cadastro} />
         <Stack.Screen name="Cadastro2" component={Cadastro2} />

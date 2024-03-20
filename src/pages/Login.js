@@ -12,22 +12,29 @@ import {
 } from 'react-native';
 
 export function Login({ navigation }) {
-  const [hideTexts, setHideTexts] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
-  const handleInputFocus = () => {
-    setHideTexts(true);
+  const handleKeyboardDidShow = () => {
+    setKeyboardVisible(true);
+  };
+
+  const handleKeyboardDidHide = () => {
+    setKeyboardVisible(false);
   };
 
   useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      handleKeyboardDidShow
+    );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => {
-        setHideTexts(false); // Mostra os textos quando o teclado é fechado
-      }
+      handleKeyboardDidHide
     );
 
     return () => {
-      keyboardDidHideListener.remove(); // Remove o listener quando o componente é desmontado
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
     };
   }, []);
 
@@ -46,20 +53,18 @@ export function Login({ navigation }) {
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-          onFocus={handleInputFocus}
         ></TextInput>
         <Text style={styles.textlabel}>Senha</Text>
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-          onFocus={handleInputFocus}
         ></TextInput>
         <TouchableOpacity style={styles.botaologin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <View>
-        {!hideTexts && (
+        {!keyboardVisible && (
           <>
             <Text style={{ textAlign: 'center', fontSize: 15 }}>
               Não possui conta?
@@ -68,17 +73,21 @@ export function Login({ navigation }) {
           </>
         )}
         <View style={styles.botoesinf}>
-          <TouchableOpacity
-            style={styles.botaofretes}
-            onPress={() => navigation.navigate('Cadastro')}
-          >
-            <Text style={styles.botfretestexto}>Procuro</Text>
-            <Text style={styles.botfretestexto}>Fretes</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.botaocadastro}>
-            <Text style={styles.botfretestexto}>Cadastrar</Text>
-            <Text style={styles.botfretestexto}>Fretes</Text>
-          </TouchableOpacity>
+          {!keyboardVisible && (
+            <>
+              <TouchableOpacity
+                style={styles.botaofretes}
+                onPress={() => navigation.navigate('Cadastro')}
+              >
+                <Text style={styles.botfretestexto}>Procuro</Text>
+                <Text style={styles.botfretestexto}>Fretes</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.botaocadastro}>
+                <Text style={styles.botfretestexto}>Cadastrar</Text>
+                <Text style={styles.botfretestexto}>Fretes</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
       </View>
     </View>
@@ -125,7 +134,6 @@ const styles = StyleSheet.create({
   textobotao: {
     color: '#fff',
     fontSize: 20,
-
   },
   botoesinf: {
     display: 'flex',
@@ -141,7 +149,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  botfretestexto:{
+  botfretestexto: {
     color: '#fff',
     fontSize: 15,
   },
@@ -152,5 +160,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
 });
