@@ -19,9 +19,10 @@ export function Cadastro3({ navigation }) {
 
   const handleInputFocus = (inputRef) => {
     inputRef.current.measure((x, y, width, height, pageX, pageY) => {
-      scrollViewRef.current.scrollTo({ y: pageY, animated: true });
+      scrollViewRef.current.scrollTo({ y: pageY + height, animated: true }); // Adicione a altura do componente ao deslocamento
     });
   };
+  
 
   return (
     <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scrollContainer}>
@@ -30,7 +31,7 @@ export function Cadastro3({ navigation }) {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.containerform}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Ajuste o valor conforme necessário
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0} // Ajuste o valor conforme necessário  
         >
           <Text style={styles.nomeempresa}><Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes</Text>
           <Text style={styles.textDesc}>Cadastre-se para conseguir os melhores fretes para seu caminhão</Text>
@@ -135,8 +136,7 @@ const styles = StyleSheet.create({
   },
   textDesc: {
     textAlign: 'center',
-    paddingBottom: 18,
-    fontSize: 16,
+    paddingVertical: 18,
     color: '#666',
   },
   nomeempresa: {
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   botaologin: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
+    right: -1,
     height: 40,
     width: 120,
     backgroundColor: '#FF7A00',

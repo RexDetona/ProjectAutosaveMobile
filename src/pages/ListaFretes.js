@@ -1,7 +1,18 @@
-import React from 'react';
-import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable } from 'react-native';
 
 export function ListaFretes() {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedFilters, setSelectedFilters] = useState([]);
+
+    const toggleFilter = (filter) => {
+        if (selectedFilters.includes(filter)) {
+            setSelectedFilters(selectedFilters.filter(item => item !== filter));
+        } else {
+            setSelectedFilters([...selectedFilters, filter]);
+        }
+    };
+
     return (
         <View>
             <View style={styles.container}>
@@ -13,14 +24,15 @@ export function ListaFretes() {
                             source={require('../assets/imagens/perfil.png')}
                             style={styles.imagemPerfil}
                         />
-                        <Text style={styles.perfiltexto}>Perfil</Text>
                     </View>
                 </View>
                 <View style={styles.conteudo}>
                     <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
                     <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
                     <View style={styles.containerfiltro}>
-                        <TouchableOpacity style={styles.botaofiltro}><Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text></TouchableOpacity>
+                        <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
+                            <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
+                        </TouchableOpacity>
                     </View>
                     <Text>Foram encontrados 3 fretes.</Text>
 
@@ -68,14 +80,68 @@ export function ListaFretes() {
                             <TouchableOpacity style={styles.cardbotao}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
                         </View>
                     </View>
-
-
-
                 </View>
             </View>
+
+            {/* Modal de Filtros */}
+            
+<Modal
+    animationType="slide"
+    transparent={true}
+    visible={modalVisible}
+    onRequestClose={() => {
+        setModalVisible(!modalVisible);
+    }}
+>
+    <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+            <Text style={styles.modalText}>Selecione os Filtros</Text>
+            {/* Botões de Filtro */}
+            <Pressable
+                style={[styles.filterButton, selectedFilters.includes('Valor') && styles.filterButtonSelected]}
+                onPress={() => toggleFilter('Valor')}
+            >
+                <Text style={styles.filterButtonText}>Valor</Text>
+            </Pressable>
+            <Pressable
+                style={[styles.filterButton, selectedFilters.includes('Empresa') && styles.filterButtonSelected]}
+                onPress={() => toggleFilter('Empresa')}
+            >
+                <Text style={styles.filterButtonText}>Empresa</Text>
+            </Pressable>
+            <Pressable
+                style={[styles.filterButton, selectedFilters.includes('Hora') && styles.filterButtonSelected]}
+                onPress={() => toggleFilter('Hora')}
+            >
+                <Text style={styles.filterButtonText}>Hora</Text>
+            </Pressable>
+            <Pressable
+                style={[styles.filterButton, selectedFilters.includes('Peso da Carga') && styles.filterButtonSelected]}
+                onPress={() => toggleFilter('Peso da Carga')}
+            >
+                <Text style={styles.filterButtonText}>Peso da Carga</Text>
+            </Pressable>
+            <Pressable
+                style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
+                onPress={() => toggleFilter('Tipo de Carga')}
+            >
+                <Text style={styles.filterButtonText}>Tipo de Carga</Text>
+            </Pressable>
+            {/* Botão de Fechar Modal */}
+            <Pressable
+                style={[styles.filterButton, styles.filterButtonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+            >
+                <Text style={styles.filterButtonText}>Fechar</Text>
+            </Pressable>
+        </View>
+    </View>
+</Modal>
+
         </View>
     );
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -114,6 +180,7 @@ const styles = StyleSheet.create({
     },
     perfil: {
         alignItems: 'center',
+        justifyContent: 'center',
     },
     conteudo: {
         height: 900,
@@ -176,5 +243,52 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         textAlignVertical: 'center',
-    }
-})
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+    },
+    modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    filterButton: {
+        backgroundColor: '#2D3F57',
+        borderRadius: 5,
+        padding: 10,
+        marginVertical: 5,
+        width: 150,
+        alignItems: 'center',
+    },
+    filterButtonSelected: {
+        backgroundColor: '#FF7A00',
+    },
+    filterButtonClose: {
+        backgroundColor: '#FF0000',
+    },
+    filterButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        fontSize: 16,
+    },
+});
