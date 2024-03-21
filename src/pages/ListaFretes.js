@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 
 export function ListaFretes() {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
+    const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card
 
     const toggleFilter = (filter) => {
         if (selectedFilters.includes(filter)) {
@@ -13,137 +14,154 @@ export function ListaFretes() {
         }
     };
 
+    const toggleCardExpansion = (index) => {
+        const newExpandedCards = [...expandedCards];
+        newExpandedCards[index] = !newExpandedCards[index];
+        setExpandedCards(newExpandedCards);
+    };
+
     return (
-        <View>
-            <View style={styles.container}>
-                <StatusBar style="auto" />
-                <View style={styles.header}>
-                    <Text style={styles.mobyheader}>Mooby Fretes</Text>
-                    <View style={styles.perfil}>
-                        <Image
-                            source={require('../assets/imagens/perfil.png')}
-                            style={styles.imagemPerfil}
-                        />
+        <ScrollView>
+            <View>
+                <View style={styles.container}>
+                    <StatusBar style="auto" />
+                    <View style={styles.header}>
+                        <Text style={styles.mobyheader}>Mooby Fretes</Text>
+                        <View style={styles.perfil}>
+                            <Image
+                                source={require('../assets/imagens/perfil.png')}
+                                style={styles.imagemPerfil}
+                            />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.conteudo}>
-                    <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
-                    <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
-                    <View style={styles.containerfiltro}>
-                        <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
-                            <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
-                        </TouchableOpacity>
-                    </View>
-                    <Text>Foram encontrados 3 fretes.</Text>
+                    <View style={styles.conteudo}>
+                        <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
+                        <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
+                        <View style={styles.containerfiltro}>
+                            <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
+                                <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
+                            </TouchableOpacity>
+                        </View>
+                        <Text>Foram encontrados 3 fretes.</Text>
+                    
+                        <View style={[styles.cardfrete, expandedCards[0] && styles.expandedCard]}>
+                            <View>
+                                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
+                                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
+                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
 
-                    <View style={styles.cardfrete}>
-                        <View>
-                            <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
-                            <Text style={{fontSize: 11, textAlign:'center', marginTop: 5}}>Lançado a 2 horas.</Text>
+                                {/* Conteúdo expandido */}
+                                {expandedCards[0] && (
+                                    <View style={{}}>
+                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
+                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                        {/* Continuar conteudo do card expandido. -Gustavo */}
+                                    </View>
+                                    
+                                )}
+                            </View>
+                            <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ 4.500</Text>
+                                <TouchableOpacity style={styles.cardbotao} onPress={() => toggleCardExpansion(0)}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
+                            </View>
                         </View>
-                        <View>
-                            <Text style={{paddingBottom: 23}}>De: Campinas - SP</Text>
-                            <Text style>Para: Niterói - RJ</Text>
-                        </View>
-                        <View style={{justifyContent:'space-between'}}>
-                            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>R$ 4.500</Text>
-                            <TouchableOpacity style={styles.cardbotao}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
-                        </View>
-                    </View>
 
-                    <View style={styles.cardfrete}>
-                        <View>
-                            <Image source={require('../assets/imagens/cardimg2.png')} style={styles.imgcard} />
-                            <Text style={{fontSize: 11, textAlign:'center', marginTop: 5}}>Lançado a 30 min.</Text>
-                        </View>
-                        <View>
-                            <Text style={{paddingBottom: 23}}>De: Três Barras - SC</Text>
-                            <Text>Para: Porto Feliz - SP</Text>
-                        </View>
-                        <View style={{justifyContent:'space-between'}}>
-                            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>R$ 13.700</Text>
-                            <TouchableOpacity style={styles.cardbotao}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
-                        </View>
-                    </View>
+                        <View style={[styles.cardfrete, expandedCards[1] && styles.expandedCard]}>
+                            <View>
+                                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
+                                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
+                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
 
-                    <View style={styles.cardfrete}>
-                        <View>
-                            <Image source={require('../assets/imagens/cardimg3.png')} style={styles.imgcard} />
-                            <Text style={{fontSize: 11, textAlign:'center', marginTop: 5}}>Lançado a 2 horas.</Text>
-                        </View>
-                        <View>
-                            <Text style={{paddingBottom: 23}}>De: Viana - ES</Text>
-                            <Text>Para: Matão - SP</Text>
-                        </View>
-                        <View style={{justifyContent:'space-between'}}>
-                            <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: 20}}>R$ 22.220</Text>
-                            <TouchableOpacity style={styles.cardbotao}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
+                                {/* Conteúdo expandido */}
+                                {expandedCards[1] && (
+                                    <View style={{}}>
+                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
+                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                        {/* Continuar conteudo do card expandido. -Gustavo */}
+                                    </View>
+                                    
+                                )}
+                            </View>
+                            <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ 4.500</Text>
+                                <TouchableOpacity style={styles.cardbotao} onPress={() => toggleCardExpansion(1)}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                 </View>
             </View>
 
             {/* Modal de Filtros */}
-            
-<Modal
-    animationType="slide"
-    transparent={true}
-    visible={modalVisible}
-    onRequestClose={() => {
-        setModalVisible(!modalVisible);
-    }}
->
-    <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-            <Text style={styles.modalText}>Selecione os Filtros</Text>
-            {/* Botões de Filtro */}
-            <Pressable
-                style={[styles.filterButton, selectedFilters.includes('Valor') && styles.filterButtonSelected]}
-                onPress={() => toggleFilter('Valor')}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={modalVisible}
+                onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                }}
             >
-                <Text style={styles.filterButtonText}>Valor</Text>
-            </Pressable>
-            <Pressable
-                style={[styles.filterButton, selectedFilters.includes('Empresa') && styles.filterButtonSelected]}
-                onPress={() => toggleFilter('Empresa')}
-            >
-                <Text style={styles.filterButtonText}>Empresa</Text>
-            </Pressable>
-            <Pressable
-                style={[styles.filterButton, selectedFilters.includes('Hora') && styles.filterButtonSelected]}
-                onPress={() => toggleFilter('Hora')}
-            >
-                <Text style={styles.filterButtonText}>Hora</Text>
-            </Pressable>
-            <Pressable
-                style={[styles.filterButton, selectedFilters.includes('Peso da Carga') && styles.filterButtonSelected]}
-                onPress={() => toggleFilter('Peso da Carga')}
-            >
-                <Text style={styles.filterButtonText}>Peso da Carga</Text>
-            </Pressable>
-            <Pressable
-                style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
-                onPress={() => toggleFilter('Tipo de Carga')}
-            >
-                <Text style={styles.filterButtonText}>Tipo de Carga</Text>
-            </Pressable>
-            {/* Botão de Fechar Modal */}
-            <Pressable
-                style={[styles.filterButton, styles.filterButtonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-            >
-                <Text style={styles.filterButtonText}>Fechar</Text>
-            </Pressable>
-        </View>
-    </View>
-</Modal>
-
-        </View>
+                <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Selecione os Filtros</Text>
+                        {/* Botões de Filtro */}
+                        <Pressable
+                            style={[styles.filterButton, selectedFilters.includes('Valor') && styles.filterButtonSelected]}
+                            onPress={() => toggleFilter('Valor')}
+                        >
+                            <Text style={styles.filterButtonText}>Valor</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[styles.filterButton, selectedFilters.includes('Empresa') && styles.filterButtonSelected]}
+                            onPress={() => toggleFilter('Empresa')}
+                        >
+                            <Text style={styles.filterButtonText}>Empresa</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[styles.filterButton, selectedFilters.includes('Hora') && styles.filterButtonSelected]}
+                            onPress={() => toggleFilter('Hora')}
+                        >
+                            <Text style={styles.filterButtonText}>Hora</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[styles.filterButton, selectedFilters.includes('Peso da Carga') && styles.filterButtonSelected]}
+                            onPress={() => toggleFilter('Peso da Carga')}
+                        >
+                                                   <Text style={styles.filterButtonText}>Peso da Carga</Text>
+                    </Pressable>
+                    <Pressable
+                        style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
+                        onPress={() => toggleFilter('Tipo de Carga')}
+                    >
+                        <Text style={styles.filterButtonText}>Tipo de Carga</Text>
+                    </Pressable>
+                    {/* Botão de Fechar Modal */}
+                    <Pressable
+                        style={[styles.filterButton, styles.filterButtonClose]}
+                        onPress={() => setModalVisible(!modalVisible)}
+                    >
+                        <Text style={styles.filterButtonText}>Fechar</Text>
+                    </Pressable>
+                </View>
+            </View>
+        </Modal>
+    </ScrollView>
     );
 }
 
 
+
+
+
 const styles = StyleSheet.create({
+    scrollViewContent: {
+        flexGrow: 1,
+    },
     container: {
         flex: 1,
         backgroundColor: '#fff',
@@ -290,5 +308,16 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         fontSize: 16,
+    },
+    expandedCard: {
+        height: 300, // Altura maior para o card expandido
+    },
+    conteudo: {
+        height: 900,
+        width: '100%',
+        alignItems: 'center',
+    },
+    scrollView: {
+        flexGrow: 1,
     },
 });
