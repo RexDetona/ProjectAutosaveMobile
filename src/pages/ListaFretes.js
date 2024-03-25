@@ -56,8 +56,15 @@ export function ListaFretes() {
                                 {/* Conteúdo expandido */}
                                 {expandedCards[0] && (
                                     <View style={{}}>
+                                        <View>
                                         <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
                                         <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                        </View>
+                                        <View>
+                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
+                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                        </View>
+                                        
                                         {/* Continuar conteudo do card expandido. -Gustavo */}
                                     </View>
                                     
@@ -83,6 +90,7 @@ export function ListaFretes() {
                                     <View style={{}}>
                                         <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
                                         <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                        
                                         {/* Continuar conteudo do card expandido. -Gustavo */}
                                     </View>
                                     
