@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 
-export function ListaFretes() {
+export function ListaFretes({navigation}) {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card
-
     const toggleFilter = (filter) => {
         if (selectedFilters.includes(filter)) {
             setSelectedFilters(selectedFilters.filter(item => item !== filter));
@@ -27,12 +26,12 @@ export function ListaFretes() {
                     <StatusBar style="auto" />
                     <View style={styles.header}>
                         <Text style={styles.mobyheader}>Mooby Fretes</Text>
-                        <View style={styles.perfil}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.perfil}>
                             <Image
                                 source={require('../assets/imagens/perfil.png')}
                                 style={styles.imagemPerfil}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.conteudo}>
                         <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
@@ -43,31 +42,31 @@ export function ListaFretes() {
                             </TouchableOpacity>
                         </View>
                         <Text>Foram encontrados 3 fretes.</Text>
-                    
+
                         <View style={[styles.cardfrete, expandedCards[0] && styles.expandedCard]}>
                             <View>
                                 <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
                                 <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
-                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
+                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
+                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
 
                                 {/* Conteúdo expandido */}
                                 {expandedCards[0] && (
                                     <View style={{}}>
                                         <View>
-                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
-                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                            <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
+                                            <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
                                         </View>
                                         <View>
-                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
-                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
+                                            <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
+                                            <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
                                         </View>
-                                        
+
                                         {/* Continuar conteudo do card expandido. -Gustavo */}
                                     </View>
-                                    
+
                                 )}
                             </View>
                             <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -82,18 +81,18 @@ export function ListaFretes() {
                                 <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
                             </View>
                             <View style={{ flex: 1 }}>
-                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
-                                <Text style={{fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
+                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
+                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
 
                                 {/* Conteúdo expandido */}
                                 {expandedCards[1] && (
                                     <View style={{}}>
-                                        <Text style={{fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold',}}>Veiculo</Text>
-                                        <Text style={{fontSize: 11, paddingTop: 5, marginLeft: -90,}}>Fiorino, VLC, 4/4, Toco</Text>
-                                        
+                                        <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
+                                        <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
+
                                         {/* Continuar conteudo do card expandido. -Gustavo */}
                                     </View>
-                                    
+
                                 )}
                             </View>
                             <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -140,25 +139,25 @@ export function ListaFretes() {
                             style={[styles.filterButton, selectedFilters.includes('Peso da Carga') && styles.filterButtonSelected]}
                             onPress={() => toggleFilter('Peso da Carga')}
                         >
-                                                   <Text style={styles.filterButtonText}>Peso da Carga</Text>
-                    </Pressable>
-                    <Pressable
-                        style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
-                        onPress={() => toggleFilter('Tipo de Carga')}
-                    >
-                        <Text style={styles.filterButtonText}>Tipo de Carga</Text>
-                    </Pressable>
-                    {/* Botão de Fechar Modal */}
-                    <Pressable
-                        style={[styles.filterButton, styles.filterButtonClose]}
-                        onPress={() => setModalVisible(!modalVisible)}
-                    >
-                        <Text style={styles.filterButtonText}>Fechar</Text>
-                    </Pressable>
+                            <Text style={styles.filterButtonText}>Peso da Carga</Text>
+                        </Pressable>
+                        <Pressable
+                            style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
+                            onPress={() => toggleFilter('Tipo de Carga')}
+                        >
+                            <Text style={styles.filterButtonText}>Tipo de Carga</Text>
+                        </Pressable>
+                        {/* Botão de Fechar Modal */}
+                        <Pressable
+                            style={[styles.filterButton, styles.filterButtonClose]}
+                            onPress={() => setModalVisible(!modalVisible)}
+                        >
+                            <Text style={styles.filterButtonText}>Fechar</Text>
+                        </Pressable>
+                    </View>
                 </View>
-            </View>
-        </Modal>
-    </ScrollView>
+            </Modal>
+        </ScrollView>
     );
 }
 
@@ -243,7 +242,7 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
     },
-    cardfrete:{
+    cardfrete: {
         display: 'flex',
         flexDirection: 'row',
         width: '90%',
@@ -260,7 +259,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     cardbotao: {
-        backgroundColor:'#FF7A00', 
+        backgroundColor: '#FF7A00',
         width: 90,
         height: 23,
         borderRadius: 5,
