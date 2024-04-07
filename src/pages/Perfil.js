@@ -10,7 +10,7 @@ export function Perfil({ navigation }) {
     <TouchableOpacity onPress={() => navigation.navigate('ListaFretes')}><Image source={require('../assets/imagens/voltar.png')} style={styles.voltar}/></TouchableOpacity>
         <Text style={styles.mobyheader}>  Menu</Text>
         </View>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{flexDirection:'row'}}>
         <TouchableOpacity onPress={() => navigation.navigate('Perfil')}>
             <Image
                 source={require('../assets/imagens/configuracao.png')}
@@ -25,6 +25,7 @@ export function Perfil({ navigation }) {
         </TouchableOpacity>
         </View>
     </View>
+    <ScrollView>
     <View style={{width: '100%'}}>
     <View style={{position:'relative', marginVertical: 15, alignItems: 'center'}}>
     <TouchableOpacity style={styles.perfil}>
@@ -41,7 +42,7 @@ export function Perfil({ navigation }) {
         </TouchableOpacity>   
     </View>
     <View style={styles.nome}>
-      <Text style={styles.textoNome}>H. Romeu Pinto</Text>
+      <Text style={styles.textoNome}>Romeu</Text>
       <TouchableOpacity style={styles.altNome}>
             <Image
                 source={require('../assets/imagens/lapis.png')}
@@ -50,6 +51,30 @@ export function Perfil({ navigation }) {
         </TouchableOpacity> 
     </View>
     </View>
+    <View style={styles.dados}>
+    <Text style={styles.textlabel}>CPF</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Sexo</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Telefone</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Estado</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Cidade</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Número do CNH</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Categoria do CNH</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Data de Emissão</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <Text style={styles.textlabel}>Estado Expedidor</Text>
+        <TextInput style={styles.input} selectionColor={'#FF7A00'}></TextInput>
+        <TouchableOpacity style={styles.botaoatt}>
+          <Text style={styles.textobotao}>ATUALIZAR</Text>
+        </TouchableOpacity>
+    </View>
+    </ScrollView>
     </View>
   );
 }
@@ -58,7 +83,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
 },
 header: {
   paddingHorizontal: 15,
@@ -131,4 +155,34 @@ lapisIcon: {
   width: 23,
   height: 23,
 },
+dados: {
+  display: 'flex',
+  alignItems: 'center',
+  paddingVertical: 20,
+},
+textlabel: {
+  paddingBottom: 10,
+  fontSize: 15,
+  width:'65%',
+},
+input: {
+  textAlign: 'center',
+  height: 30,
+  marginBottom: 30,
+  width:'65%',
+  backgroundColor: '#D9D9D9',
+},
+botaoatt: {
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: 45,
+  width: 170,
+  backgroundColor: '#FF7A00',
+  borderRadius: 6,
+},
+textobotao: {
+ color: '#fff',
+ fontWeight: 'bold',
+ fontSize: 23,
+}
 });

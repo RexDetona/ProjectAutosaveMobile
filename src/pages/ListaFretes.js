@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 
-export function ListaFretes({navigation}) {
+export function ListaFretes({ navigation }) {
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card
@@ -54,18 +54,41 @@ export function ListaFretes({navigation}) {
 
                                 {/* Conteúdo expandido */}
                                 {expandedCards[0] && (
-                                    <View style={{}}>
+
+                                    <View style={styles.cardexp}>
                                         <View>
-                                            <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
-                                            <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold'}}>Veiculo</Text>
+                                            <Text style={{ fontSize: 11 }}>Fiorino, VLC, 4/4, Toco</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
+                                            <Text style={{ fontSize: 11 }}>Baú, Sider</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
+                                            <Text style={{ fontSize: 11 }}>Fogões</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
+                                            <Text style={{ fontSize: 11 }}>437,2 km</Text>
                                         </View>
                                         <View>
-                                            <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
-                                            <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
+                                        <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
+                                            <Text style={{ fontSize: 11 }}></Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
+                                            <Text style={{ fontSize: 11 }}>2 t</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
+                                            <Text style={{ fontSize: 11 }}>Entrega na Loja</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamento</Text>
+                                            <Text style={{ fontSize: 11 }}>PIX</Text>
+                                        </View>
+                                        <View>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Lona</Text>
+                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pedágio</Text>
+                                            <Text style={{ fontSize: 11 }}>SIM</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Rastreamento</Text>
+                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
+                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Agenciamento</Text>
+                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
                                         </View>
 
-                                        {/* Continuar conteudo do card expandido. -Gustavo */}
                                     </View>
+
 
                                 )}
                             </View>
@@ -327,4 +350,17 @@ const styles = StyleSheet.create({
     scrollView: {
         flexGrow: 1,
     },
+    cardexp: {
+        paddingTop: 10,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        gap: 20,
+    },
+    barra: {
+        height: 20,
+        width: '90%',
+        backgroundColor: '#fff'
+    }
 });
