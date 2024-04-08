@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import * as ImagePicker from 'expo-image-picker'
 
 export function Perfil({ navigation }) {
+
+const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png')
+const handleImagePicker = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({ 
+    aspect: [4 , 4],
+    allowsEditing: true,
+    base64: true,
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    setImage(result.assets[0].uri)
+    
+  }
+}
+
   return (
     <View style={styles.container}>
     <StatusBar style="auto" />
@@ -30,11 +47,11 @@ export function Perfil({ navigation }) {
     <View style={{position:'relative', marginVertical: 15, alignItems: 'center'}}>
     <TouchableOpacity style={styles.perfil}>
             <Image
-                source={require('../assets/imagens/perfil.png')}
+                source={{uri: image}}
                 style={styles.imagemPerfil}
             />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.altFoto}>
+        <TouchableOpacity onPress={handleImagePicker} style={styles.altFoto}>
             <Image
                 source={require('../assets/imagens/camera.png')}
                 style={styles.fotoIcon}
@@ -117,12 +134,12 @@ perfil: {
   alignItems: 'center',
   width: 150,
   height: 150,
-  borderRadius: 15,
+  borderRadius: 150/2,
 },
 imagemPerfil: {
   width: 150,
   height: 150,
-  borderRadius: 15,
+  borderRadius: 150/2,
 },
 altFoto: {
 position: 'absolute',
