@@ -4,7 +4,10 @@ import * as ImagePicker from 'expo-image-picker'
 
 export function Perfil({ navigation }) {
 
-const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png')
+const [visible, setVisible] = useState(false);
+  
+const [name, setName] = useState("user");
+const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
 const handleImagePicker = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({ 
     aspect: [4 , 4],
@@ -59,13 +62,13 @@ const handleImagePicker = async () => {
         </TouchableOpacity>   
     </View>
     <View style={styles.nome}>
-      <Text style={styles.textoNome}>Romeu</Text>
-      <TouchableOpacity style={styles.altNome}>
+      <Text style={styles.textoNome} onChange={setName}>{name}</Text>
+      <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
             <Image
                 source={require('../assets/imagens/lapis.png')}
                 style={styles.lapisIcon}
             />
-        </TouchableOpacity> 
+        </TouchableOpacity>   
     </View>
     </View>
     <View style={styles.dados}>
@@ -92,6 +95,19 @@ const handleImagePicker = async () => {
         </TouchableOpacity>
     </View>
     </ScrollView>
+    {
+      visible ? (
+        <View style={styles.viewFlu}>
+          <TextInput style={styles.altInp} placeholder='Digite aqui'></TextInput>
+          <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
+            <Image
+                source={require('../assets/imagens/lapis.png')}
+                style={styles.lapisIcon}
+            />
+        </TouchableOpacity>   
+        </View>
+      ) : null
+    }
     </View>
   );
 }
@@ -162,6 +178,7 @@ nome: {
 textoNome: {
   position: 'relative',
   fontSize: 23,
+  textAlign: 'center',
   fontWeight: 'bold',
 },
 altNome: {
@@ -201,5 +218,21 @@ textobotao: {
  color: '#fff',
  fontWeight: 'bold',
  fontSize: 23,
+},
+viewFlu: {
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems:'center',
+  backgroundColor: 'rgba(0,0,0,.7)',
+},
+altInp: {
+  display: 'flex',
+  textAlign: 'center',
+  width: '65%',
+  height: 50,
+  backgroundColor: '#fff',
 }
 });
