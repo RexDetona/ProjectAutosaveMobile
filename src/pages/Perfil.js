@@ -8,6 +8,13 @@ const [visible, setVisible] = useState(false);
   
 const [name, setName] = useState("user");
 const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
+const [newName, setNewName] = useState("");
+
+const handleConfirmName = () => {
+  setName(newName);
+  setVisible(!visible); 
+};
+
 const handleImagePicker = async () => {
   const result = await ImagePicker.launchImageLibraryAsync({ 
     aspect: [4 , 4],
@@ -62,7 +69,7 @@ const handleImagePicker = async () => {
         </TouchableOpacity>   
     </View>
     <View style={styles.nome}>
-      <Text style={styles.textoNome} onChange={setName}>{name}</Text>
+      <Text style={styles.textoNome}>{name}</Text>
       <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
             <Image
                 source={require('../assets/imagens/lapis.png')}
@@ -98,8 +105,8 @@ const handleImagePicker = async () => {
     {
       visible ? (
         <View style={styles.viewFlu}>
-          <TextInput style={styles.altInp} placeholder='Digite aqui'></TextInput>
-          <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
+          <TextInput style={styles.altInp} onChangeText={(text) => setNewName(text)} placeholder='Digite aqui'></TextInput>,
+          <TouchableOpacity onPress={handleConfirmName} style={styles.altNome}>
             <Image
                 source={require('../assets/imagens/lapis.png')}
                 style={styles.lapisIcon}
