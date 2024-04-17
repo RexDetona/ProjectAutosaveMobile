@@ -1,0 +1,1 @@
+### comando para iniciar o servidor expo 'npm start' ou 'npx expo start'
