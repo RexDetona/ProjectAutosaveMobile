@@ -10,9 +10,23 @@ import {
   Platform,
   Keyboard,
 } from 'react-native';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'; // Importe a função de autenticação do Firebase
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+  authDomain: "mobby-fretes.firebaseapp.com",
+  projectId: "mobby-fretes",
+  storageBucket: "mobby-fretes.appspot.com",
+  messagingSenderId: "306864195281",
+  appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+  measurementId: "G-K2YBH5RB78"
+};
 
 export function Login({ navigation }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [email, setEmail] = useState(''); // Estado para armazenar o email
+  const [password, setPassword] = useState(''); // Estado para armazenar a senha
 
   const handleKeyboardDidShow = () => {
     setKeyboardVisible(true);
@@ -38,6 +52,24 @@ export function Login({ navigation }) {
     };
   }, []);
 
+  const handleLogin = () => {
+    // Inicialize o Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app); // Obtenha o módulo de autenticação do Firebase
+
+    // Lógica para fazer login com o Firebase
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Login bem-sucedido, você pode redirecionar o usuário para a próxima tela
+        console.log('Usuário autenticado:', userCredential.user);
+        navigation.navigate('ListaFretes');
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error('Erro ao fazer login:', error);
+      });
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -53,13 +85,18 @@ export function Login({ navigation }) {
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-        ></TextInput>
+          value={email}
+          onChangeText={(text) => setEmail(text)} // Atualiza o estado do email
+        />
         <Text style={styles.textlabel}>Senha</Text>
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-        ></TextInput>
-        <TouchableOpacity style={styles.botaologin}>
+          secureTextEntry={true} // Para ocultar a senha
+          value={password}
+          onChangeText={(text) => setPassword(text)} // Atualiza o estado da senha
+        />
+        <TouchableOpacity style={styles.botaologin} onPress={handleLogin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
