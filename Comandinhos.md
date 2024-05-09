@@ -1,5 +1,5 @@
 ### comando para iniciar o servidor expo 'npm start' ou 'npx expo start'
-
+### login e senha do APP para teste. teste@gmail.com 123456.
 
 ### Problemas
 
