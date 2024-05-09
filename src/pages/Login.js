@@ -9,10 +9,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
+// Configuração do Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
   authDomain: "mobby-fretes.firebaseapp.com",
@@ -23,6 +25,7 @@ const firebaseConfig = {
   measurementId: "G-K2YBH5RB78"
 };
 
+// Função para cadastro rápido
 const cadastroRapido = async (email, password, navigation) => {
   try {
     const app = initializeApp(firebaseConfig);
@@ -42,10 +45,12 @@ const cadastroRapido = async (email, password, navigation) => {
 };
 
 export function Login({ navigation }) {
+  // Estados
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Funções para lidar com o teclado
   const handleKeyboardDidShow = () => {
     setKeyboardVisible(true);
   };
@@ -54,6 +59,7 @@ export function Login({ navigation }) {
     setKeyboardVisible(false);
   };
 
+  // Efeito para adicionar ou remover os listeners do teclado
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
@@ -70,6 +76,7 @@ export function Login({ navigation }) {
     };
   }, []);
 
+  // Função para fazer login
   const handleLogin = () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -80,7 +87,22 @@ export function Login({ navigation }) {
         navigation.navigate('ListaFretes');
       })
       .catch((error) => {
-        console.error('Erro ao fazer login:', error);
+        // Exibe um alerta com a mensagem de erro
+        let errorMessage = 'Erro ao fazer login.';
+
+        switch (error.code) {
+          case 'auth/user-not-found':
+            errorMessage = 'Usuário não encontrado. Verifique o email digitado.';
+            break;
+          case 'auth/wrong-password':
+            errorMessage = 'Senha incorreta. Verifique a senha digitada.';
+            break;
+          default:
+            errorMessage = 'Erro ao fazer login. Tente novamente mais tarde.';
+            break;
+        }
+
+        Alert.alert('Erro', errorMessage);
       });
   };
 
@@ -148,6 +170,7 @@ export function Login({ navigation }) {
   );
 }
 
+//estilos da página
 const styles = StyleSheet.create({
   container: {
     flex: 1,
