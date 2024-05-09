@@ -11,7 +11,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'; // Importe a função de autenticação do Firebase
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -23,10 +23,28 @@ const firebaseConfig = {
   measurementId: "G-K2YBH5RB78"
 };
 
+const cadastroRapido = async (email, password, navigation) => {
+  try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // Crie uma nova conta de usuário com email e senha
+    await createUserWithEmailAndPassword(auth, email, password);
+
+    // Faça login automaticamente após o cadastro rápido
+    await signInWithEmailAndPassword(auth, email, password);
+
+    // Navegue para a página ListaFretes após o login
+    navigation.navigate('ListaFretes');
+  } catch (error) {
+    console.error('Erro ao criar conta:', error);
+  }
+};
+
 export function Login({ navigation }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [email, setEmail] = useState(''); // Estado para armazenar o email
-  const [password, setPassword] = useState(''); // Estado para armazenar a senha
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleKeyboardDidShow = () => {
     setKeyboardVisible(true);
@@ -53,19 +71,15 @@ export function Login({ navigation }) {
   }, []);
 
   const handleLogin = () => {
-    // Inicialize o Firebase
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app); // Obtenha o módulo de autenticação do Firebase
+    const auth = getAuth(app);
 
-    // Lógica para fazer login com o Firebase
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Login bem-sucedido, você pode redirecionar o usuário para a próxima tela
         console.log('Usuário autenticado:', userCredential.user);
         navigation.navigate('ListaFretes');
       })
       .catch((error) => {
-        // Handle errors here
         console.error('Erro ao fazer login:', error);
       });
   };
@@ -86,18 +100,21 @@ export function Login({ navigation }) {
           selectionColor={'#FF7A00'}
           style={styles.input}
           value={email}
-          onChangeText={(text) => setEmail(text)} // Atualiza o estado do email
+          onChangeText={(text) => setEmail(text)}
         />
         <Text style={styles.textlabel}>Senha</Text>
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-          secureTextEntry={true} // Para ocultar a senha
+          secureTextEntry={true}
           value={password}
-          onChangeText={(text) => setPassword(text)} // Atualiza o estado da senha
+          onChangeText={(text) => setPassword(text)}
         />
         <TouchableOpacity style={styles.botaologin} onPress={handleLogin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => cadastroRapido(email, password, navigation)}>
+          <Text style={styles.quickSignup}>Cadastro rápido</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <View>
@@ -171,6 +188,12 @@ const styles = StyleSheet.create({
   textobotao: {
     color: '#fff',
     fontSize: 20,
+  },
+  quickSignup: {
+    textAlign: 'center',
+    color: '#2D3F57',
+    textDecorationLine: 'underline',
+    marginTop: 10,
   },
   botoesinf: {
     display: 'flex',
