@@ -136,7 +136,7 @@ export function Login({ navigation }) {
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => cadastroRapido(email, password, navigation)}>
-          <Text style={styles.quickSignup}>Cadastro rápido</Text>
+          <Text style={styles.quickSignup}>Pré-Registro na Plataforma</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
       <View>
