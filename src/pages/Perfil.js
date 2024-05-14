@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View,Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, set } from 'firebase/database';
@@ -22,13 +22,13 @@ export function Perfil({ navigation }) {
   const [userEmail, setUserEmail] = useState(""); // Estado para armazenar o e-mail do usuário
 
   const firebaseConfig = {
-    apiKey: "SuaApiKey",
-    authDomain: "SeuAuthDomain",
-    projectId: "SeuProjectId",
-    storageBucket: "SeuStorageBucket",
-    messagingSenderId: "SeuMessagingSenderId",
-    appId: "SeuAppId",
-    measurementId: "SuaMeasurementId"
+    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+    authDomain: "mobby-fretes.firebaseapp.com",
+    projectId: "mobby-fretes",
+    storageBucket: "mobby-fretes.appspot.com",
+    messagingSenderId: "306864195281",
+    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+    measurementId: "G-K2YBH5RB78"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -137,8 +137,8 @@ export function Perfil({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.nome}>
-            <Text style={styles.textoNome}>{name}</Text> {/* Aqui exibimos o nome */}
-            <Text style={styles.textoEmail}>{userEmail}</Text> {/* Aqui exibimos o e-mail */}
+            <Text style={styles.textoNome}>{name}</Text> 
+            <Text style={styles.textoEmail}>{userEmail}</Text>
             <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
               <Image
                 source={require('../assets/imagens/lapis.png')}

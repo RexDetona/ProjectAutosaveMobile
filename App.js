@@ -1,6 +1,5 @@
 import React from 'react';
 import Rotas from './src/rotas';
-import { StyleSheet } from 'react-native';
 import { initializeApp } from "firebase/app";
 
 
