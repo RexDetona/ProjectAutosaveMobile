@@ -31,6 +31,18 @@ const cadastroRapido = async (email, password, navigation) => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
+    // Verifica se os campos de email e senha estão preenchidos
+    if (!email || !password) {
+      setErrorMessage('Por favor, preencha o email e a senha.');
+
+      // Limpa a mensagem de erro após 5 segundos
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+
+      return;
+    }
+
     // Crie uma nova conta de usuário com email e senha
     await createUserWithEmailAndPassword(auth, email, password);
 
@@ -41,6 +53,17 @@ const cadastroRapido = async (email, password, navigation) => {
     navigation.navigate('ListaFretes');
   } catch (error) {
     console.error('Erro ao criar conta:', error);
+
+    // Se o erro for de e-mail em uso, exibe um alerta
+    if (error.code === 'auth/email-already-in-use') {
+      Alert.alert(
+        'Erro',
+        'O email já está em uso. Por favor, tente com outro email.'
+      );
+    } else {
+      // Exibe um alerta genérico em caso de outros erros
+      Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
+    }
   }
 };
 
@@ -49,6 +72,8 @@ export function Login({ navigation }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [disableButtons, setDisableButtons] = useState(true); // Estado para desabilitar os botões
+  const [errorMessage, setErrorMessage] = useState(''); // Estado para mensagem de erro
 
   // Funções para lidar com o teclado
   const handleKeyboardDidShow = () => {
@@ -106,6 +131,23 @@ export function Login({ navigation }) {
       });
   };
 
+  // Função para manipular o pré-registro
+  const handlePreRegister = () => {
+    if (!email || !password) {
+      setErrorMessage('Por favor, preencha o email e a senha.');
+  
+      // Limpa a mensagem de erro após 5 segundos
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+  
+      return;
+    }
+  
+    // Realiza o pré-registro se os campos estiverem preenchidos
+    cadastroRapido(email, password, navigation);
+  };
+  
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -135,9 +177,12 @@ export function Login({ navigation }) {
         <TouchableOpacity style={styles.botaologin} onPress={handleLogin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => cadastroRapido(email, password, navigation)}>
+        <TouchableOpacity onPress={handlePreRegister}>
           <Text style={styles.quickSignup}>Pré-Registro na Plataforma</Text>
         </TouchableOpacity>
+        {errorMessage !== '' && (
+          <Text style={styles.errorMessage}>{errorMessage}</Text>
+        )}
       </KeyboardAvoidingView>
       <View>
         {!keyboardVisible && (
@@ -152,13 +197,14 @@ export function Login({ navigation }) {
           {!keyboardVisible && (
             <>
               <TouchableOpacity
-                style={styles.botaofretes}
+                style={[styles.botaofretes, disableButtons && styles.disabledButton]}
                 onPress={() => navigation.navigate('Cadastro')}
+                disabled={disableButtons}
               >
                 <Text style={styles.botfretestexto}>Procuro</Text>
                 <Text style={styles.botfretestexto}>Fretes</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.botaocadastro}>
+              <TouchableOpacity style={[styles.botaocadastro, disableButtons && styles.disabledButton]} disabled={disableButtons}>
                 <Text style={styles.botfretestexto}>Cadastrar</Text>
                 <Text style={styles.botfretestexto}>Fretes</Text>
               </TouchableOpacity>
@@ -172,6 +218,15 @@ export function Login({ navigation }) {
 
 //estilos da página
 const styles = StyleSheet.create({
+  errorMessage: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  disabledButton: {
+    opacity: 0.6,
+    backgroundColor: '#CCCCCC',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -245,3 +300,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
