@@ -2,8 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View,Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, set } from 'firebase/database';
-import { getAuth } from 'firebase/auth'; // Importe getAuth
+import { getFirestore} from 'firebase/firestore';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+    authDomain: "mobby-fretes.firebaseapp.com",
+    projectId: "mobby-fretes",
+    storageBucket: "mobby-fretes.appspot.com",
+    messagingSenderId: "306864195281",
+    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+    measurementId: "G-K2YBH5RB78"
+  };
+
+  const app = initializeApp(firebaseConfig);
 
 export function Perfil({ navigation }) {
   const [visible, setVisible] = useState(false);
@@ -18,21 +29,7 @@ export function Perfil({ navigation }) {
   const [dataEmissao, setDataEmissao] = useState("");
   const [estadoExpedidor, setEstadoExpedidor] = useState("");
   const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
-  const [newName, setNewName] = useState("");
-  const [userEmail, setUserEmail] = useState(""); // Estado para armazenar o e-mail do usuário
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
-    authDomain: "mobby-fretes.firebaseapp.com",
-    projectId: "mobby-fretes",
-    storageBucket: "mobby-fretes.appspot.com",
-    messagingSenderId: "306864195281",
-    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
-    measurementId: "G-K2YBH5RB78"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app); // Obtenha a referência de autenticação
 
   // UseEffect para obter o e-mail do usuário atual quando o componente é montado
   useEffect(() => {
@@ -53,7 +50,7 @@ export function Perfil({ navigation }) {
   const handleImagePicker = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       aspect: [4, 4],
-      allowsEditing: true,
+      allowsEditin0g: true,
       base64: true,
       quality: 1,
     });

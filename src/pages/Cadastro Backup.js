@@ -1,21 +1,5 @@
 import React, { useRef } from 'react';
-import { useState } from 'react';
-import { View, StatusBar, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
-  authDomain: "mobby-fretes.firebaseapp.com",
-  projectId: "mobby-fretes",
-  storageBucket: "mobby-fretes.appspot.com",
-  messagingSenderId: "306864195281",
-  appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
-  measurementId: "G-K2YBH5RB78"
-};
-
-
-
+import { View, StatusBar, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 
 export function Cadastro({ navigation }) {
   const emailInputRef = useRef(null);
@@ -26,47 +10,11 @@ export function Cadastro({ navigation }) {
   const cidadeInputRef = useRef(null);
   const scrollViewRef = useRef();
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-
   const handleInputFocus = (inputRef) => {
     inputRef.current.measure((x, y, width, height, pageX, pageY) => {
       scrollViewRef.current.scrollTo({ y: pageY, animated: true });
     });
   };
-
-  const handleCadastro = () => {
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        console.log('Usuário autenticado:', userCredential.user);
-        Alert.alert('Usuário cadastrado!')
-        navigation.navigate('Login');
-      })
-      .catch((error) => {
-        // Exibe um alerta com a mensagem de erro
-        let errorMessage = 'Erro ao Cadastrar.';
-
-        if (error.code === 'auth/email-already-in-use') {
-          Alert.alert(
-            'Erro',
-            'O email já está em uso. Por favor, tente com outro email.'
-          );
-        } else {
-          // Exibe um alerta genérico em caso de outros erros
-          Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
-        }
-
-        Alert.alert('Erro', errorMessage);
-      });
-  };
-
-
-
-
 
   return (
     <ScrollView ref={scrollViewRef} contentContainerStyle={styles.scrollContainer}>
@@ -84,7 +32,6 @@ export function Cadastro({ navigation }) {
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(emailInputRef)}
-            onChangeText={(email) => setEmail(email)}
             ref={emailInputRef}
           />
           <Text style={styles.textlabel}>Senha</Text>
@@ -92,7 +39,6 @@ export function Cadastro({ navigation }) {
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(passwordInputRef)}
-            onChangeText={(password) => setPassword(password)}
             ref={passwordInputRef}
           />
           <Text style={styles.textlabel}>CPF</Text>
@@ -123,7 +69,7 @@ export function Cadastro({ navigation }) {
             onFocus={() => handleInputFocus(cidadeInputRef)}
             ref={cidadeInputRef}
           />
-          <TouchableOpacity onPress={handleCadastro} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate('Cadastro2')} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>
         </KeyboardAvoidingView>
       </View>
     </ScrollView>

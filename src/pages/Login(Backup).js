@@ -1,20 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Alert, } from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  Alert,
+} from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
+// Configuração do Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
-    authDomain: "mobby-fretes.firebaseapp.com",
-    projectId: "mobby-fretes",
-    storageBucket: "mobby-fretes.appspot.com",
-    messagingSenderId: "306864195281",
-    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
-    measurementId: "G-K2YBH5RB78"
-  };
+  apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+  authDomain: "mobby-fretes.firebaseapp.com",
+  projectId: "mobby-fretes",
+  storageBucket: "mobby-fretes.appspot.com",
+  messagingSenderId: "306864195281",
+  appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+  measurementId: "G-K2YBH5RB78"
+};
 
+// Função para cadastro rápido
+const cadastroRapido = async (email, password, navigation) => {
+  try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
+    // Verifica se os campos de email e senha estão preenchidos
+    if (!email || !password) {
+      setErrorMessage('Por favor, preencha o email e a senha.');
+
+      // Limpa a mensagem de erro após 5 segundos
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+
+      return;
+    }
+
+    // Crie uma nova conta de usuário com email e senha
+    await createUserWithEmailAndPassword(auth, email, password);
+
+    // Faça login automaticamente após o cadastro rápido
+    await signInWithEmailAndPassword(auth, email, password);
+
+    // Navegue para a página ListaFretes após o login
+    navigation.navigate('ListaFretes');
+  } catch (error) {
+    console.error('Erro ao criar conta:', error);
+
+    // Se o erro for de e-mail em uso, exibe um alerta
+    if (error.code === 'auth/email-already-in-use') {
+      Alert.alert(
+        'Erro',
+        'O email já está em uso. Por favor, tente com outro email.'
+      );
+    } else {
+      // Exibe um alerta genérico em caso de outros erros
+      Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
+    }
+  }
+};
 
 export function Login({ navigation }) {
   // Estados
@@ -24,6 +75,33 @@ export function Login({ navigation }) {
   const [disableButtons, setDisableButtons] = useState(true); // Estado para desabilitar os botões
   const [errorMessage, setErrorMessage] = useState(''); // Estado para mensagem de erro
 
+  // Funções para lidar com o teclado
+  const handleKeyboardDidShow = () => {
+    setKeyboardVisible(true);
+  };
+
+  const handleKeyboardDidHide = () => {
+    setKeyboardVisible(false);
+  };
+
+  // Efeito para adicionar ou remover os listeners do teclado
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      handleKeyboardDidShow
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      handleKeyboardDidHide
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  // Função para fazer login
   const handleLogin = () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
@@ -53,35 +131,23 @@ export function Login({ navigation }) {
       });
   };
 
-  // Funções para lidar com o teclado
-  const handleKeyboardDidShow = () => {
-    setKeyboardVisible(true);
+  // Função para manipular o pré-registro
+  const handlePreRegister = () => {
+    if (!email || !password) {
+      setErrorMessage('Por favor, preencha o email e a senha.');
+  
+      // Limpa a mensagem de erro após 5 segundos
+      setTimeout(() => {
+        setErrorMessage('');
+      }, 5000);
+  
+      return;
+    }
+  
+    // Realiza o pré-registro se os campos estiverem preenchidos
+    cadastroRapido(email, password, navigation);
   };
-
-  const handleKeyboardDidHide = () => {
-    setKeyboardVisible(false);
-  };
-
-  // Efeito para adicionar ou remover os listeners do teclado
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      handleKeyboardDidShow
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      handleKeyboardDidHide
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
-
-
-
-
+  
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
@@ -97,9 +163,8 @@ export function Login({ navigation }) {
         <TextInput
           selectionColor={'#FF7A00'}
           style={styles.input}
-          type='email'
           value={email}
-          onChangeText={(email) => setEmail(email)}
+          onChangeText={(text) => setEmail(text)}
         />
         <Text style={styles.textlabel}>Senha</Text>
         <TextInput
@@ -107,12 +172,12 @@ export function Login({ navigation }) {
           style={styles.input}
           secureTextEntry={true}
           value={password}
-          onChangeText={(password) => setPassword(password)}
+          onChangeText={(text) => setPassword(text)}
         />
         <TouchableOpacity style={styles.botaologin} onPress={handleLogin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handlePreRegister}>
           <Text style={styles.quickSignup}>Pré-Registro na Plataforma</Text>
         </TouchableOpacity>
         {errorMessage !== '' && (
@@ -132,8 +197,9 @@ export function Login({ navigation }) {
           {!keyboardVisible && (
             <>
               <TouchableOpacity
-                style={[styles.botaofretes]}
+                style={[styles.botaofretes, disableButtons && styles.disabledButton]}
                 onPress={() => navigation.navigate('Cadastro')}
+                disabled={disableButtons}
               >
                 <Text style={styles.botfretestexto}>Procuro</Text>
                 <Text style={styles.botfretestexto}>Fretes</Text>
