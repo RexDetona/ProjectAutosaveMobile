@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { View, StatusBar, TextInput, TouchableOpacity, Text, StyleSheet, KeyboardAvoidingView, Platform, ScrollView, Alert } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getFirestore, collection,addDoc, setDoc, doc } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -28,6 +29,7 @@ export function Cadastro({ navigation }) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
 
   const handleInputFocus = (inputRef) => {
@@ -36,14 +38,22 @@ export function Cadastro({ navigation }) {
     });
   };
 
-  const handleCadastro = () => {
+  const handleCadastro = async () => {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const docRef = await addDoc(collection(db, "users"), {
+      name: "Tokyo",
+      email: "Japan"
+    });
+    console.log("Document written with ID: ", docRef.id);
 
     createUserWithEmailAndPassword(auth, email, password)
+
       .then((userCredential) => {
         console.log('Usuário autenticado:', userCredential.user);
-        Alert.alert('Usuário cadastrado!')
+        Alert.alert('Usuário cadastrado!');
         navigation.navigate('Login');
       })
       .catch((error) => {
@@ -94,6 +104,14 @@ export function Cadastro({ navigation }) {
             onFocus={() => handleInputFocus(passwordInputRef)}
             onChangeText={(password) => setPassword(password)}
             ref={passwordInputRef}
+          />
+          <Text style={styles.textlabel}>Nome</Text>
+          <TextInput
+            selectionColor={'#FF7A00'}
+            style={styles.input}
+            onFocus={() => handleInputFocus(cpfInputRef)}
+            onChangeText={setName}
+            ref={cpfInputRef}
           />
           <Text style={styles.textlabel}>CPF</Text>
           <TextInput
@@ -172,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: '79%',
-    transform: [{ translateX: -60}],
+    transform: [{ translateX: -60 }],
   },
   textobotao: {
     color: '#fff',
