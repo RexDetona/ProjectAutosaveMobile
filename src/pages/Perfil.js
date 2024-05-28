@@ -3,7 +3,8 @@ import { View,Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, S
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
 import { getFirestore} from 'firebase/firestore';
-
+import { getAuth } from 'firebase/auth';
+ 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
     authDomain: "mobby-fretes.firebaseapp.com",

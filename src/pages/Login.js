@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Alert, } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",

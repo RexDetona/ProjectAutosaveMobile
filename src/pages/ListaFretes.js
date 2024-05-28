@@ -1,7 +1,32 @@
 import React, { useState } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getFirestore, collection, getDoc } from 'firebase/firestore';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+    authDomain: "mobby-fretes.firebaseapp.com",
+    projectId: "mobby-fretes",
+    storageBucket: "mobby-fretes.appspot.com",
+    messagingSenderId: "306864195281",
+    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+    measurementId: "G-K2YBH5RB78"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+
 
 export function ListaFretes({ navigation }) {
+
+   const db = getFirestore(app);
+
+    
+
+
+
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card

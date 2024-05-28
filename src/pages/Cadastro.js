@@ -19,10 +19,9 @@ const firebaseConfig = {
 
 
 export function Cadastro({ navigation }) {
+  const nomeInputRef = useRef(null);
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
-  const cpfInputRef = useRef(null);
-  const sexoInputRef = useRef(null);
   const telefoneInputRef = useRef(null);
   const cidadeInputRef = useRef(null);
   const scrollViewRef = useRef();
@@ -30,6 +29,9 @@ export function Cadastro({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [telefon, setTelefon] = useState('');
+  const [city, setCity] = useState('')
+
 
 
   const handleInputFocus = (inputRef) => {
@@ -43,35 +45,35 @@ export function Cadastro({ navigation }) {
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    const docRef = await addDoc(collection(db, "users"), {
-      name: "Tokyo",
-      email: "Japan"
-    });
-    console.log("Document written with ID: ", docRef.id);
-
-    createUserWithEmailAndPassword(auth, email, password)
-
-      .then((userCredential) => {
-        console.log('Usuário autenticado:', userCredential.user);
-        Alert.alert('Usuário cadastrado!');
-        navigation.navigate('Login');
-      })
-      .catch((error) => {
-        // Exibe um alerta com a mensagem de erro
-        let errorMessage = 'Erro ao Cadastrar.';
-
-        if (error.code === 'auth/email-already-in-use') {
-          Alert.alert(
-            'Erro',
-            'O email já está em uso. Por favor, tente com outro email.'
-          );
-        } else {
-          // Exibe um alerta genérico em caso de outros erros
-          Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
-        }
-
-        Alert.alert('Erro', errorMessage);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+  
+      await setDoc(doc(db, 'users', user.uid), {
+        name: name,
+        email: email,
+        telefon: telefon,
+        city: city,
       });
+  
+      console.log('Usuário autenticado:', user);
+      Alert.alert('Usuário cadastrado!');
+      navigation.navigate('Login');
+    } catch (error) {
+      let errorMessage = 'Erro ao Cadastrar.';
+  
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert(
+          'Erro',
+          'O email já está em uso. Por favor, tente com outro email.'
+        );
+      } else {
+        Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
+      }
+  
+      Alert.alert('Erro', errorMessage);
+    }
+
   };
 
 
@@ -89,6 +91,14 @@ export function Cadastro({ navigation }) {
         >
           <Text style={styles.nomeempresa}><Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes</Text>
           <Text style={styles.textDesc}>Cadastre-se para conseguir os melhores fretes para seu caminhão</Text>
+          <Text style={styles.textlabel}>Nome</Text>
+          <TextInput
+            selectionColor={'#FF7A00'}
+            style={styles.input}
+            onFocus={() => handleInputFocus(nomeInputRef)}
+            onChangeText={setName}
+            ref={nomeInputRef}
+          />
           <Text style={styles.textlabel}>Email</Text>
           <TextInput
             selectionColor={'#FF7A00'}
@@ -105,33 +115,12 @@ export function Cadastro({ navigation }) {
             onChangeText={(password) => setPassword(password)}
             ref={passwordInputRef}
           />
-          <Text style={styles.textlabel}>Nome</Text>
-          <TextInput
-            selectionColor={'#FF7A00'}
-            style={styles.input}
-            onFocus={() => handleInputFocus(cpfInputRef)}
-            onChangeText={setName}
-            ref={cpfInputRef}
-          />
-          <Text style={styles.textlabel}>CPF</Text>
-          <TextInput
-            selectionColor={'#FF7A00'}
-            style={styles.input}
-            onFocus={() => handleInputFocus(cpfInputRef)}
-            ref={cpfInputRef}
-          />
-          <Text style={styles.textlabel}>Sexo</Text>
-          <TextInput
-            selectionColor={'#FF7A00'}
-            style={styles.input}
-            onFocus={() => handleInputFocus(sexoInputRef)}
-            ref={sexoInputRef}
-          />
           <Text style={styles.textlabel}>Telefone</Text>
           <TextInput
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(telefoneInputRef)}
+            onChangeText={(telefon) => setTelefon(telefon)}
             ref={telefoneInputRef}
           />
           <Text style={styles.textlabel}>Cidade Residencial</Text>
@@ -139,6 +128,7 @@ export function Cadastro({ navigation }) {
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(cidadeInputRef)}
+            onChangeText={(city) => setCity(city)}
             ref={cidadeInputRef}
           />
           <TouchableOpacity onPress={handleCadastro} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>
