@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 25,
         fontWeight: 'bold',
-        textAlignVertical: 'center',
+        verticalAlign: 'center',
     },
     imagemPerfil: {
         width: 60,
@@ -311,7 +311,7 @@ const styles = StyleSheet.create({
     cardbottext: {
         color: 'white',
         textAlign: 'center',
-        textAlignVertical: 'center',
+        verticalAlign: 'center',
     },
     centeredView: {
         flex: 1,
