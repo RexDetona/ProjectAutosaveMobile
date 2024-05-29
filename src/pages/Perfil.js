@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View,Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
-import { getFirestore} from 'firebase/firestore';
+import { getFirestore, collection, getDoc, doc} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
  
 const firebaseConfig = {
@@ -16,8 +16,46 @@ const firebaseConfig = {
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app)
+  const db = getFirestore(app)
+
+  
 
 export function Perfil({ navigation }) {
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const userf = auth.currentUser
+  const uid = userf.uid
+
+  console.log(uid)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+    setLoading(true);
+    try{
+      const docRef =  doc(db, "users", uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUser(docSnap.data());
+      }else{
+        console.error("Documento não encontrado")
+        setError("Documento não encontrado")
+      }
+    }catch (err) {
+      console.error("Erro ao carregar documento: ", err);
+      setError(err.message);
+    }finally{
+      setLoading(false);
+    }
+    };
+    fetchUser();
+  }, [uid]);
+
+
+
   const [visible, setVisible] = useState(false);
   const [name, setName] = useState("");
   const [cpf, setCpf] = useState("");
@@ -32,21 +70,6 @@ export function Perfil({ navigation }) {
   const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
 
 
-  // UseEffect para obter o e-mail do usuário atual quando o componente é montado
-  useEffect(() => {
-    if (auth.currentUser) {
-      setUserEmail(auth.currentUser.email);
-      setName(auth.currentUser.email); // Defina o nome inicial como o e-mail do usuário
-    }
-  }, [auth.currentUser]);
-
-  const handleConfirmName = () => {
-    setName(newName);
-    setVisible(false); // Oculta o campo de texto
-
-    // Salvar no banco de dados
-    saveDataToDatabase();
-  };
 
   const handleImagePicker = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -61,39 +84,16 @@ export function Perfil({ navigation }) {
     }
   };
 
-  const saveDataToDatabase = () => {
-    // Obtém uma referência para o banco de dados
-    const db = getDatabase();
-
-    // Define o caminho no banco de dados onde os dados serão salvos
-    const userRef = ref(db, `usuarios/${auth.currentUser.uid}`);
-
-    // Define os dados a serem salvos
-    const userData = {
-      name,
-      cpf,
-      sexo,
-      telefone,
-      estado,
-      cidade,
-      numCnh,
-      categoriaCnh,
-      dataEmissao,
-      estadoExpedidor,
-      image, // Se desejar, salve a URL da imagem
-    };
-
-    // Salva os dados no banco de dados
-    set(userRef, userData)
-      .then(() => {
-        console.log('Dados salvos com sucesso!');
-        Alert.alert('Sucesso', 'Dados salvos com sucesso!');
-      })
-      .catch((error) => {
-        console.error('Erro ao salvar os dados:', error);
-        Alert.alert('Erro', 'Erro ao salvar os dados. Tente novamente mais tarde.');
-      });
-  };
+  if(loading) {
+    return (
+    <Text>Carregando...</Text>
+    )
+  }
+  if(error) {
+    return (
+      <Text>Erro: {error}</Text>
+    )
+  }
 
   return (
     <View style={styles.container}>
@@ -135,8 +135,8 @@ export function Perfil({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.nome}>
-            <Text style={styles.textoNome}>{name}</Text> 
-            <Text style={styles.textoEmail}>{userEmail}</Text>
+            <Text style={styles.textoNome}>{user.name}</Text> 
+            <Text style={styles.textoEmail}>{user.email}</Text>
             <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
               <Image
                 source={require('../assets/imagens/lapis.png')}
@@ -164,7 +164,7 @@ export function Perfil({ navigation }) {
           <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setDataEmissao}></TextInput>
           <Text style={styles.textlabel}>Estado Expedidor</Text>
           <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setEstadoExpedidor}></TextInput>
-          <TouchableOpacity style={styles.botaoatt} onPress={saveDataToDatabase}>
+          <TouchableOpacity style={styles.botaoatt}>
             <Text style={styles.textobotao}>ATUALIZAR</Text>
           </TouchableOpacity>
         </View>
@@ -253,6 +253,9 @@ const styles = StyleSheet.create({
     fontSize: 23,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  textoEmail: {
+    marginTop: 10,
   },
   altNome: {
     position: 'absolute',
