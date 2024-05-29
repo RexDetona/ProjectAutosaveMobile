@@ -3,6 +3,7 @@ import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -16,6 +17,7 @@ const firebaseConfig = {
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const storage = getStorage(app, "gs://mobby-fretes.appspot.com");
 
 
 
@@ -293,7 +295,7 @@ const styles = StyleSheet.create({
         height: 115,
         backgroundColor: '#E1E1F7',
         padding: 10,
-        borderRadius: 10,
+        borderRadius: 5,
         justifyContent: 'space-around',
         marginTop: 15,
     },

@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -18,6 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app)
 const db = getFirestore(app)
+const storage = getStorage(app, "gs://mobby-fretes.appspot.com");
 
 
 
@@ -43,8 +45,16 @@ export function Perfil({ navigation }) {
           console.error("Documento não encontrado")
           setError("Documento não encontrado")
         }
+        try {
+          const imageRef = ref(storage, `userimage/${uid}`);
+          const downloadURL = await getDownloadURL(imageRef);
+          setImage(downloadURL);
+        } catch (err) {
+          console.error("Erro ao obter URL da imagem: ", err);
+          setError("Erro ao obter URL da imagem");
+        }
       } catch (err) {
-        console.error("Erro ao carregar documento: ", err);
+        console.error("Erro ao carregar usuário: ", err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -66,7 +76,7 @@ export function Perfil({ navigation }) {
   const [categoriaCnh, setCategoriaCnh] = useState("");
   const [dataEmissao, setDataEmissao] = useState("");
   const [estadoExpedidor, setEstadoExpedidor] = useState("");
-  const [image, setImage] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
+  const [image, setImage] = useState("https://cdn-icons-png.flaticon.com/512/149/149071.png");
 
 
 
@@ -80,6 +90,15 @@ export function Perfil({ navigation }) {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      const response = await fetch(result.assets[0].uri);
+      const blob = await response.blob();
+      const storageRef = ref(storage, `userimage/${uid}`);
+      try {
+        await uploadBytes(storageRef, blob);
+        console.log('Upload feito com sucesso!');
+      } catch (error) {
+        console.log('Erro ao fazer upload do arquivo', error);
+      }
     }
   };
 
@@ -89,7 +108,7 @@ export function Perfil({ navigation }) {
         <Text style={styles.nomeempresa}>
           <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
         </Text>
-        <Text style={{textAlign: 'center'}}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
+        <Text style={{ textAlign: 'center' }}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
       </View>
     )
   }
