@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View,Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDoc, doc} from 'firebase/firestore';
+import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
- 
+
 const firebaseConfig = {
-    apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
-    authDomain: "mobby-fretes.firebaseapp.com",
-    projectId: "mobby-fretes",
-    storageBucket: "mobby-fretes.appspot.com",
-    messagingSenderId: "306864195281",
-    appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
-    measurementId: "G-K2YBH5RB78"
-  };
+  apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
+  authDomain: "mobby-fretes.firebaseapp.com",
+  projectId: "mobby-fretes",
+  storageBucket: "mobby-fretes.appspot.com",
+  messagingSenderId: "306864195281",
+  appId: "1:306864195281:web:9a346bcb2d2654b30a67f0",
+  measurementId: "G-K2YBH5RB78"
+};
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app)
-  const db = getFirestore(app)
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app)
+const db = getFirestore(app)
 
-  
+
 
 export function Perfil({ navigation }) {
 
@@ -30,26 +30,25 @@ export function Perfil({ navigation }) {
   const userf = auth.currentUser
   const uid = userf.uid
 
-  console.log(uid)
 
   useEffect(() => {
     const fetchUser = async () => {
-    setLoading(true);
-    try{
-      const docRef =  doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setUser(docSnap.data());
-      }else{
-        console.error("Documento não encontrado")
-        setError("Documento não encontrado")
+      setLoading(true);
+      try {
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setUser(docSnap.data());
+        } else {
+          console.error("Documento não encontrado")
+          setError("Documento não encontrado")
+        }
+      } catch (err) {
+        console.error("Erro ao carregar documento: ", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
-    }catch (err) {
-      console.error("Erro ao carregar documento: ", err);
-      setError(err.message);
-    }finally{
-      setLoading(false);
-    }
     };
     fetchUser();
   }, [uid]);
@@ -84,12 +83,17 @@ export function Perfil({ navigation }) {
     }
   };
 
-  if(loading) {
+  if (loading) {
     return (
-    <Text>Carregando...</Text>
+      <View style={[styles.containerloading]}>
+        <Text style={styles.nomeempresa}>
+          <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
+        </Text>
+        <Text style={{textAlign: 'center'}}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
+      </View>
     )
   }
-  if(error) {
+  if (error) {
     return (
       <Text>Erro: {error}</Text>
     )
@@ -135,7 +139,7 @@ export function Perfil({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.nome}>
-            <Text style={styles.textoNome}>{user.name}</Text> 
+            <Text style={styles.textoNome}>{user.name}</Text>
             <Text style={styles.textoEmail}>{user.email}</Text>
             <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
               <Image
@@ -151,11 +155,11 @@ export function Perfil({ navigation }) {
           <Text style={styles.textlabel}>Sexo</Text>
           <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setSexo}></TextInput>
           <Text style={styles.textlabel}>Telefone</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setTelefone}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.telefon} onChangeText={setTelefone}></TextInput>
           <Text style={styles.textlabel}>Estado</Text>
           <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setEstado}></TextInput>
           <Text style={styles.textlabel}>Cidade</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setCidade}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.city} onChangeText={setCidade}></TextInput>
           <Text style={styles.textlabel}>Número do CNH</Text>
           <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setNumCnh}></TextInput>
           <Text style={styles.textlabel}>Categoria do CNH</Text>
@@ -191,6 +195,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+  containerloading: {
+    flex: 1,
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+  },
+  nomeempresa: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
   header: {
     paddingHorizontal: 15,
     height: 100,
@@ -212,7 +226,7 @@ const styles = StyleSheet.create({
   config: {
     width: 30,
     height: 30,
-    marginRight:25,
+    marginRight: 25,
   },
   buscar: {
     width: 30,
@@ -223,12 +237,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 150,
     height: 150,
-    borderRadius: 150/2,
+    borderRadius: 150 / 2,
   },
   imagemPerfil: {
     width: 150,
     height: 150,
-    borderRadius: 150/2,
+    borderRadius: 150 / 2,
   },
   altFoto: {
     position: 'absolute',
@@ -273,13 +287,13 @@ const styles = StyleSheet.create({
   textlabel: {
     paddingBottom: 10,
     fontSize: 15,
-    width:'65%',
+    width: '65%',
   },
   input: {
     textAlign: 'center',
     height: 30,
     marginBottom: 30,
-    width:'65%',
+    width: '65%',
     backgroundColor: '#D9D9D9',
   },
   botaoatt: {
@@ -301,7 +315,7 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
-    alignItems:'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,.7)',
   },
   altInp: {
