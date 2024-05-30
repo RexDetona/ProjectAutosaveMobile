@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDoc, doc } from 'firebase/firestore';
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -51,7 +51,6 @@ export function Perfil({ navigation }) {
           setImage(downloadURL);
         } catch (err) {
           console.error("Erro ao obter URL da imagem: ", err);
-          setError("Erro ao obter URL da imagem");
         }
       } catch (err) {
         console.error("Erro ao carregar usuário: ", err);
@@ -159,7 +158,6 @@ export function Perfil({ navigation }) {
           </View>
           <View style={styles.nome}>
             <Text style={styles.textoNome}>{user.name}</Text>
-            <Text style={styles.textoEmail}>{user.email}</Text>
             <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
               <Image
                 source={require('../assets/imagens/lapis.png')}
@@ -195,8 +193,8 @@ export function Perfil({ navigation }) {
       {
         visible ? (
           <View style={styles.viewFlu}>
-            <TextInput style={styles.altInp} onChangeText={setNewName} placeholder='Digite aqui'></TextInput>,
-            <TouchableOpacity onPress={handleConfirmName} style={styles.altNome}>
+            <TextInput style={styles.altInp} onChangeText={setName} placeholder='Digite aqui'></TextInput>
+            <TouchableOpacity style={styles.altNome}>
               <Image
                 source={require('../assets/imagens/lapis.png')}
                 style={styles.lapisIcon}

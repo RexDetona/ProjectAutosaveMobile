@@ -3,7 +3,7 @@ import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, 
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage'
+import { getStorage, getDownloadURL, ref } from 'firebase/storage'
 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -23,8 +23,34 @@ const firebaseConfig = {
 
 export function ListaFretes({ navigation }) {
 
-   const db = getFirestore(app);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
+ 
+   const userf = auth.currentUser
+   const uid = userf.uid
+ 
+ 
+   useEffect(() => {
+     const fetchUser = async () => {
+       setLoading(true);
+         try {
+           const imageRef = ref(storage, `userimage/${uid}`);
+           const downloadURL = await getDownloadURL(imageRef);
+           setUserimg(downloadURL);
+         } catch (err) {
+           console.error("Erro ao obter URL da imagem: ", err);
+         }
+         finally {
+         setLoading(false);
+       }
+     };
+     fetchUser();
+   }, [uid]);
 
+
+
+
+    const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png')
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card
@@ -42,6 +68,17 @@ export function ListaFretes({ navigation }) {
         setExpandedCards(newExpandedCards);
     };
 
+    if (loading) {
+        return (
+          <View style={[styles.containerloading]}>
+            <Text style={styles.nomeempresa}>
+              <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
+            </Text>
+            <Text style={{ textAlign: 'center' }}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
+          </View>
+        )
+      }
+
     return (
         <ScrollView>
             <View>
@@ -51,7 +88,7 @@ export function ListaFretes({ navigation }) {
                         <Text style={styles.mobyheader}>Mooby Fretes</Text>
                         <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.perfil}>
                             <Image
-                                source={require('../assets/imagens/perfil.png')}
+                                source={{uri: userimg}}
                                 style={styles.imagemPerfil}
                             />
                         </TouchableOpacity>
@@ -221,6 +258,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
 
     },
+    containerloading: {
+        flex: 1,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+      },
+      nomeempresa: {
+        fontSize: 40,
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
     header: {
         paddingHorizontal: 15,
         height: 100,
@@ -237,12 +284,12 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 25,
         fontWeight: 'bold',
-        verticalAlign: 'center',
+        textAlignVertical: 'center',
     },
     imagemPerfil: {
         width: 60,
         height: 60,
-        borderRadius: 15,
+        borderRadius: 60 / 2,
     },
     perfiltexto: {
         color: 'white',
@@ -313,7 +360,7 @@ const styles = StyleSheet.create({
     cardbottext: {
         color: 'white',
         textAlign: 'center',
-        verticalAlign: 'center',
+        textAlignVertical: 'center',
     },
     centeredView: {
         flex: 1,
