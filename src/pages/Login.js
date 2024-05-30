@@ -111,9 +111,6 @@ export function Login({ navigation }) {
         <TouchableOpacity style={styles.botaologin} onPress={handleLogin}>
           <Text style={styles.textobotao}>ENTRAR</Text>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={styles.quickSignup}>Pré-Registro na Plataforma</Text>
-        </TouchableOpacity>
         {errorMessage !== '' && (
           <Text style={styles.errorMessage}>{errorMessage}</Text>
         )}

@@ -76,7 +76,7 @@ export function Cadastro({ navigation }) {
 
   };
 
-
+  
 
 
 
@@ -111,6 +111,7 @@ export function Cadastro({ navigation }) {
           <TextInput
             selectionColor={'#FF7A00'}
             style={styles.input}
+            secureTextEntry = {true}
             onFocus={() => handleInputFocus(passwordInputRef)}
             onChangeText={(password) => setPassword(password)}
             ref={passwordInputRef}
