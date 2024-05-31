@@ -29,8 +29,8 @@ export function Cadastro({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [telefon, setTelefon] = useState('');
-  const [city, setCity] = useState('')
+  const [telefone, setTelefone] = useState('');
+  const [cidade, setCidade] = useState('')
 
 
 
@@ -50,10 +50,10 @@ export function Cadastro({ navigation }) {
       const user = userCredential.user;
   
       await setDoc(doc(db, 'users', user.uid), {
-        name: name,
+        nome: name,
         email: email,
-        telefon: telefon,
-        city: city,
+        telefone: telefone,
+        cidade: cidade,
       });
   
       console.log('Usuário autenticado:', user);
@@ -121,7 +121,7 @@ export function Cadastro({ navigation }) {
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(telefoneInputRef)}
-            onChangeText={(telefon) => setTelefon(telefon)}
+            onChangeText={(telefone) => setTelefone(telefone)}
             ref={telefoneInputRef}
           />
           <Text style={styles.textlabel}>Cidade Residencial</Text>
@@ -129,7 +129,7 @@ export function Cadastro({ navigation }) {
             selectionColor={'#FF7A00'}
             style={styles.input}
             onFocus={() => handleInputFocus(cidadeInputRef)}
-            onChangeText={(city) => setCity(city)}
+            onChangeText={(cidade) => setCidade(cidade)}
             ref={cidadeInputRef}
           />
           <TouchableOpacity onPress={handleCadastro} style={styles.botaologin}><Text style={styles.textobotao}>PROXIMO</Text></TouchableOpacity>

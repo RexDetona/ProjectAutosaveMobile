@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, doc, onSnapshot } from 'firebase/firestore';
 import { getStorage, getDownloadURL, ref } from 'firebase/storage'
 
 const firebaseConfig = {
@@ -18,6 +18,7 @@ const firebaseConfig = {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const storage = getStorage(app, "gs://mobby-fretes.appspot.com");
+  const db = getFirestore(app)
 
 
 
@@ -25,27 +26,39 @@ export function ListaFretes({ navigation }) {
 
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState(null);
+   const [user, setUser] = useState(null);
  
    const userf = auth.currentUser
    const uid = userf.uid
  
  
    useEffect(() => {
-     const fetchUser = async () => {
-       setLoading(true);
-         try {
-           const imageRef = ref(storage, `userimage/${uid}`);
-           const downloadURL = await getDownloadURL(imageRef);
-           setUserimg(downloadURL);
-         } catch (err) {
-           console.error("Erro ao obter URL da imagem: ", err);
-         }
-         finally {
-         setLoading(false);
-       }
-     };
-     fetchUser();
-   }, [uid]);
+    const docRef = doc(db, "users", uid);
+    const unsub = onSnapshot(docRef, async (docSnap) =>  {
+      setLoading(true);
+      try {
+        if (docSnap.exists()) {
+          setUser(docSnap.data());
+        } else {
+          console.error("Documento não encontrado")
+          setError("Documento não encontrado")
+        }
+        try {
+          const imageRef = ref(storage, `userimage/${uid}`);
+          const downloadURL = await getDownloadURL(imageRef);
+          setUserimg(downloadURL);
+        } catch (err) {
+          console.error("Erro ao obter URL da imagem: ", err);
+        }
+      } catch (err) {
+        console.error("Erro ao carregar usuário: ", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    });
+    return() => unsub();
+  }, [uid]);
 
 
 

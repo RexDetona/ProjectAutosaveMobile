@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDoc, doc } from 'firebase/firestore';
+import { getFirestore, getDoc, setDoc, doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -24,21 +24,31 @@ const storage = getStorage(app, "gs://mobby-fretes.appspot.com");
 
 
 export function Perfil({ navigation }) {
-
+ 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [cpf, setCpf] = useState("");
+  const [sexo, setSexo] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [estado, setEstado] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [numCnh, setNumCnh] = useState("");
+  const [categoriaCnh, setCategoriaCnh] = useState("");
+  const [dataEmissao, setDataEmissao] = useState("");
+  const [estadoExpedidor, setEstadoExpedidor] = useState("");
+  const [image, setImage] = useState("https://cdn-icons-png.flaticon.com/512/149/149071.png");
 
   const userf = auth.currentUser
   const uid = userf.uid
 
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const docRef = doc(db, "users", uid);
+    const unsub = onSnapshot(docRef, async (docSnap) =>  {
       setLoading(true);
       try {
-        const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setUser(docSnap.data());
         } else {
@@ -58,25 +68,9 @@ export function Perfil({ navigation }) {
       } finally {
         setLoading(false);
       }
-    };
-    fetchUser();
+    });
+    return() => unsub();
   }, [uid]);
-
-
-
-  const [visible, setVisible] = useState(false);
-  const [name, setName] = useState("");
-  const [cpf, setCpf] = useState("");
-  const [sexo, setSexo] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [numCnh, setNumCnh] = useState("");
-  const [categoriaCnh, setCategoriaCnh] = useState("");
-  const [dataEmissao, setDataEmissao] = useState("");
-  const [estadoExpedidor, setEstadoExpedidor] = useState("");
-  const [image, setImage] = useState("https://cdn-icons-png.flaticon.com/512/149/149071.png");
-
 
 
   const handleImagePicker = async () => {
@@ -100,6 +94,33 @@ export function Perfil({ navigation }) {
       }
     }
   };
+
+  const handleAltCadastro = async () => {
+    try{
+    await setDoc(doc(db, 'users', user.uid), {
+      nome: user,
+      cpf: cpf,
+      sexo: sexo,
+      telefone: telefone,
+      estado: estado,
+      cidade: cidade,
+      numCnh: numCnh,
+      categoriaCnh: categoriaCnh,
+      dataEmissao: dataEmissao,
+      estadoExpedidor: estadoExpedidor
+    });
+    console.log('Documento alterado com sucesso');
+    Alert.alert('Perfil atualizado com sucesso');
+    navigation.navigate('Perfil');
+  }catch (error){
+    console.log('Erro no cadastro ', error)
+    Alert.alert('Erro ao cadastrar, tente mais tarde');
+  }
+  
+  
+  }
+
+
 
   if (loading) {
     return (
@@ -157,52 +178,35 @@ export function Perfil({ navigation }) {
             </TouchableOpacity>
           </View>
           <View style={styles.nome}>
-            <Text style={styles.textoNome}>{user.name}</Text>
-            <TouchableOpacity onPress={() => setVisible(!visible)} style={styles.altNome}>
-              <Image
-                source={require('../assets/imagens/lapis.png')}
-                style={styles.lapisIcon}
-              />
-            </TouchableOpacity>
+            <Text style={styles.textoNome}>{user.nome}</Text>
           </View>
         </View>
         <View style={styles.dados}>
+        <Text style={styles.textlabel}>Nome Completo</Text>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.nome} onChangeText={setUser}></TextInput>
           <Text style={styles.textlabel}>CPF</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setCpf}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.cpf} onChangeText={setCpf}></TextInput>
           <Text style={styles.textlabel}>Sexo</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setSexo}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.sexo} onChangeText={setSexo}></TextInput>
           <Text style={styles.textlabel}>Telefone</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.telefon} onChangeText={setTelefone}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.telefone} onChangeText={setTelefone}></TextInput>
           <Text style={styles.textlabel}>Estado</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setEstado}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.estado} onChangeText={setEstado}></TextInput>
           <Text style={styles.textlabel}>Cidade</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.city} onChangeText={setCidade}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.cidade} onChangeText={setCidade}></TextInput>
           <Text style={styles.textlabel}>Número do CNH</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setNumCnh}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.numCnh} onChangeText={setNumCnh}></TextInput>
           <Text style={styles.textlabel}>Categoria do CNH</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setCategoriaCnh}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.categoriaCnh} onChangeText={setCategoriaCnh}></TextInput>
           <Text style={styles.textlabel}>Data de Emissão</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setDataEmissao}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.dataEmissao} onChangeText={setDataEmissao}></TextInput>
           <Text style={styles.textlabel}>Estado Expedidor</Text>
-          <TextInput style={styles.input} selectionColor={'#FF7A00'} onChangeText={setEstadoExpedidor}></TextInput>
+          <TextInput style={styles.input} selectionColor={'#FF7A00'} value={user.estadoExpedidor} onChangeText={setEstadoExpedidor}></TextInput>
           <TouchableOpacity style={styles.botaoatt}>
-            <Text style={styles.textobotao}>ATUALIZAR</Text>
+            <Text style={styles.textobotao} onPress={handleAltCadastro}>ATUALIZAR</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-      {
-        visible ? (
-          <View style={styles.viewFlu}>
-            <TextInput style={styles.altInp} onChangeText={setName} placeholder='Digite aqui'></TextInput>
-            <TouchableOpacity style={styles.altNome}>
-              <Image
-                source={require('../assets/imagens/lapis.png')}
-                style={styles.lapisIcon}
-              />
-            </TouchableOpacity>
-          </View>
-        ) : null
-      }
     </View>
   );
 }
