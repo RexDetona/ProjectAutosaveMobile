@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, Alert, } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -16,12 +16,30 @@ const firebaseConfig = {
 
 
 export function Login({ navigation }) {
-  // Estados
+
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [disableButtons, setDisableButtons] = useState(true); // Estado para desabilitar os botões
   const [errorMessage, setErrorMessage] = useState(''); // Estado para mensagem de erro
+
+  useEffect(() => {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const signOutCurrentUser = async () => {
+      try {
+        await signOut(auth);
+
+      } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+      }
+    };
+
+    signOutCurrentUser();
+
+  
+  });
 
   const handleLogin = () => {
     const app = initializeApp(firebaseConfig);
@@ -30,7 +48,7 @@ export function Login({ navigation }) {
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log('Usuário autenticado:', userCredential.user);
-        navigation.navigate('ListaFretes');
+        navigation.replace('ListaFretes');
       })
       .catch((error) => {
         // Exibe um alerta com a mensagem de erro
@@ -77,6 +95,7 @@ export function Login({ navigation }) {
       keyboardDidHideListener.remove();
     };
   }, []);
+
 
 
 

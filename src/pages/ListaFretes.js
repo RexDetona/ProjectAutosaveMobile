@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, getDocs, doc, onSnapshot } from 'firebase/firestore';
+import { getFirestore, getDoc, doc } from 'firebase/firestore';
 import { getStorage, getDownloadURL, ref } from 'firebase/storage'
 
 const firebaseConfig = {
@@ -17,246 +17,125 @@ const firebaseConfig = {
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  const storage = getStorage(app, "gs://mobby-fretes.appspot.com");
-  const db = getFirestore(app)
-
-
-
-export function ListaFretes({ navigation }) {
-
-   const [loading, setLoading] = useState(true);
-   const [error, setError] = useState(null);
-   const [user, setUser] = useState(null);
- 
-   const userf = auth.currentUser
-   const uid = userf.uid
- 
- 
-   useEffect(() => {
-    const docRef = doc(db, "users", uid);
-    const unsub = onSnapshot(docRef, async (docSnap) =>  {
-      setLoading(true);
-      try {
-        if (docSnap.exists()) {
-          setUser(docSnap.data());
-        } else {
-          console.error("Documento não encontrado")
-          setError("Documento não encontrado")
-        }
-        try {
-          const imageRef = ref(storage, `userimage/${uid}`);
-          const downloadURL = await getDownloadURL(imageRef);
-          setUserimg(downloadURL);
-        } catch (err) {
-          console.error("Erro ao obter URL da imagem: ", err);
-        }
-      } catch (err) {
-        console.error("Erro ao carregar usuário: ", err);
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    });
-    return() => unsub();
-  }, [uid]);
-
-
-
-
-    const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png')
+  const storage = getStorage(app);
+  const db = getFirestore(app);
+  
+  export function ListaFretes({ navigation }) {
+    const [user, setUser] = useState(null);
+    const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
-    const [expandedCards, setExpandedCards] = useState([false, false]); // Array de estado para controlar a expansão de cada card
-    const toggleFilter = (filter) => {
-        if (selectedFilters.includes(filter)) {
-            setSelectedFilters(selectedFilters.filter(item => item !== filter));
-        } else {
-            setSelectedFilters([...selectedFilters, filter]);
+    const [expandedCards, setExpandedCards] = useState([false, false]);
+  
+    useEffect(() => {
+      const loadUserData = async () => {
+        try {
+          const userf = auth.currentUser;
+          const uid = userf.uid;
+          const docRef = doc(db, "users", uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            setUser(docSnap.data());
+            const imageRef = ref(storage, `userimage/${uid}`);
+            const downloadURL = await getDownloadURL(imageRef);
+            setUserimg(downloadURL);
+          } else {
+            console.error("Documento não encontrado");
+            setError("Documento não encontrado");
+          }
+        } catch (err) {
+          console.error("Erro ao carregar usuário: ", err);
+          setError(err.message);
         }
+      };
+  
+      loadUserData();
+    }, []);
+  
+    const toggleFilter = (filter) => {
+      setSelectedFilters(prevFilters => {
+        if (prevFilters.includes(filter)) {
+          return prevFilters.filter(item => item !== filter);
+        } else {
+          return [...prevFilters, filter];
+        }
+      });
     };
-
+  
     const toggleCardExpansion = (index) => {
-        const newExpandedCards = [...expandedCards];
-        newExpandedCards[index] = !newExpandedCards[index];
-        setExpandedCards(newExpandedCards);
+      setExpandedCards(prevExpanded => {
+        const newExpanded = [...prevExpanded];
+        newExpanded[index] = !newExpanded[index];
+        return newExpanded;
+      });
     };
-
-    if (loading) {
-        return (
-          <View style={[styles.containerloading]}>
-            <Text style={styles.nomeempresa}>
-              <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
-            </Text>
-            <Text style={{ textAlign: 'center' }}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
-          </View>
-        )
-      }
-
+  
     return (
-        <ScrollView>
-            <View>
-                <View style={styles.container}>
-                    <StatusBar style="auto" />
-                    <View style={styles.header}>
-                        <Text style={styles.mobyheader}>Mooby Fretes</Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('Perfil')} style={styles.perfil}>
-                            <Image
-                                source={{uri: userimg}}
-                                style={styles.imagemPerfil}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.conteudo}>
-                        <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
-                        <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
-                        <View style={styles.containerfiltro}>
-                            <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
-                                <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
-                            </TouchableOpacity>
-                        </View>
-                        <Text>Foram encontrados 3 fretes.</Text>
-
-                        <View style={[styles.cardfrete, expandedCards[0] && styles.expandedCard]}>
-                            <View>
-                                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
-                                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
-                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
-
-                                {/* Conteúdo expandido */}
-                                {expandedCards[0] && (
-
-                                    <View style={styles.cardexp}>
-                                        <View>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold'}}>Veiculo</Text>
-                                            <Text style={{ fontSize: 11 }}>Fiorino, VLC, 4/4, Toco</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
-                                            <Text style={{ fontSize: 11 }}>Baú, Sider</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
-                                            <Text style={{ fontSize: 11 }}>Fogões</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
-                                            <Text style={{ fontSize: 11 }}>437,2 km</Text>
-                                        </View>
-                                        <View>
-                                        <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
-                                            <Text style={{ fontSize: 11 }}></Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
-                                            <Text style={{ fontSize: 11 }}>2 t</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
-                                            <Text style={{ fontSize: 11 }}>Entrega na Loja</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamento</Text>
-                                            <Text style={{ fontSize: 11 }}>PIX</Text>
-                                        </View>
-                                        <View>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Lona</Text>
-                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pedágio</Text>
-                                            <Text style={{ fontSize: 11 }}>SIM</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Rastreamento</Text>
-                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
-                                            <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Agenciamento</Text>
-                                            <Text style={{ fontSize: 11 }}>NÃO</Text>
-                                        </View>
-
-                                    </View>
-
-
-                                )}
-                            </View>
-                            <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ 4.500</Text>
-                                <TouchableOpacity style={styles.cardbotao} onPress={() => toggleCardExpansion(0)}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
-                            </View>
-                        </View>
-
-                        <View style={[styles.cardfrete, expandedCards[1] && styles.expandedCard]}>
-                            <View>
-                                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
-                                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
-                                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
-
-                                {/* Conteúdo expandido */}
-                                {expandedCards[1] && (
-                                    <View style={{}}>
-                                        <Text style={{ fontSize: 12, paddingTop: 30, marginLeft: -90, fontWeight: 'bold', }}>Veiculo</Text>
-                                        <Text style={{ fontSize: 11, paddingTop: 5, marginLeft: -90, }}>Fiorino, VLC, 4/4, Toco</Text>
-
-                                        {/* Continuar conteudo do card expandido. -Gustavo */}
-                                    </View>
-
-                                )}
-                            </View>
-                            <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ 4.500</Text>
-                                <TouchableOpacity style={styles.cardbotao} onPress={() => toggleCardExpansion(1)}><Text style={styles.cardbottext}>VISUALIZAR</Text></TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+      <ScrollView>
+        <View style={styles.container}>
+          <StatusBar style="auto" />
+          <View style={styles.header}>
+            <Text style={styles.mobyheader}>Mooby Fretes</Text>
+            <View style={{justifyContent: 'center'}}>
+            <TouchableOpacity onPress={() => navigation.navigate('Perfil')}>
+              <Image
+                source={{uri: userimg}}
+                style={styles.imagemPerfil}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.replace('Login')} >
+                <Text style={styles.sair}>Sair</Text>
+            </TouchableOpacity>
             </View>
-
-            {/* Modal de Filtros */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => {
-                    setModalVisible(!modalVisible);
-                }}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.modalText}>Selecione os Filtros</Text>
-                        {/* Botões de Filtro */}
-                        <Pressable
-                            style={[styles.filterButton, selectedFilters.includes('Valor') && styles.filterButtonSelected]}
-                            onPress={() => toggleFilter('Valor')}
-                        >
-                            <Text style={styles.filterButtonText}>Valor</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.filterButton, selectedFilters.includes('Empresa') && styles.filterButtonSelected]}
-                            onPress={() => toggleFilter('Empresa')}
-                        >
-                            <Text style={styles.filterButtonText}>Empresa</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.filterButton, selectedFilters.includes('Hora') && styles.filterButtonSelected]}
-                            onPress={() => toggleFilter('Hora')}
-                        >
-                            <Text style={styles.filterButtonText}>Hora</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.filterButton, selectedFilters.includes('Peso da Carga') && styles.filterButtonSelected]}
-                            onPress={() => toggleFilter('Peso da Carga')}
-                        >
-                            <Text style={styles.filterButtonText}>Peso da Carga</Text>
-                        </Pressable>
-                        <Pressable
-                            style={[styles.filterButton, selectedFilters.includes('Tipo de Carga') && styles.filterButtonSelected]}
-                            onPress={() => toggleFilter('Tipo de Carga')}
-                        >
-                            <Text style={styles.filterButtonText}>Tipo de Carga</Text>
-                        </Pressable>
-                        {/* Botão de Fechar Modal */}
-                        <Pressable
-                            style={[styles.filterButton, styles.filterButtonClose]}
-                            onPress={() => setModalVisible(!modalVisible)}
-                        >
-                            <Text style={styles.filterButtonText}>Fechar</Text>
-                        </Pressable>
-                    </View>
+          </View>
+          <View style={styles.conteudo}>
+            <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
+            <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
+            <View style={styles.containerfiltro}>
+              <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
+                <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
+              </TouchableOpacity>
+            </View>
+            <Text>Foram encontrados 3 fretes.</Text>
+  
+            {[0, 1,].map((index) => (
+              <TouchableOpacity key={index} style={[styles.cardfrete, expandedCards[index] && styles.expandedCard]} onPress={() => toggleCardExpansion(index)}>
+                <View>
+                  <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
+                  <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
                 </View>
-            </Modal>
-        </ScrollView>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: Campinas SP</Text>
+                  <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: Niterói RJ</Text>
+  
+                  {expandedCards[index] && (
+                    <View style={styles.cardexp}>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Veiculo</Text>
+                      <Text style={{ fontSize: 11 }}>Fiorino, VLC, 4/4, Toco</Text>
+                    </View>
+                  )}
+                </View>
+                <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ 4.500</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+  
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(!modalVisible)}
+        >
+          {/* Modal de Filtros */}
+        </Modal>
+      </ScrollView>
     );
-}
-
+  }
+  
 
 
 
@@ -304,14 +183,12 @@ const styles = StyleSheet.create({
         height: 60,
         borderRadius: 60 / 2,
     },
-    perfiltexto: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: '100',
-    },
-    perfil: {
-        alignItems: 'center',
-        justifyContent: 'center',
+    sair:{
+        color: '#fff',
+        textAlign: 'center',
+        padding: 0,
+        margin: 0,
+        fontWeight: 'bold'
     },
     conteudo: {
         height: 900,
