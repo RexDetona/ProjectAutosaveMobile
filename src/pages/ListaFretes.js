@@ -37,9 +37,6 @@ const firebaseConfig = {
           
           if (docSnap.exists()) {
             setUser(docSnap.data());
-            const imageRef = ref(storage, `userimage/${uid}`);
-            const downloadURL = await getDownloadURL(imageRef);
-            setUserimg(downloadURL);
           } else {
             console.error("Documento não encontrado");
             setError("Documento não encontrado");
@@ -48,6 +45,13 @@ const firebaseConfig = {
           console.error("Erro ao carregar usuário: ", err);
           setError(err.message);
         }
+        try{
+          const imageRef = ref(storage, `userimage/${uid}`);
+          const downloadURL = await getDownloadURL(imageRef);
+          setUserimage(downloadURL);
+          }catch (error){
+            console.log("Erro ao carregar: ", error)
+          }
       };
   
       loadUserData();
@@ -130,7 +134,6 @@ const firebaseConfig = {
           visible={modalVisible}
           onRequestClose={() => setModalVisible(!modalVisible)}
         >
-          {/* Modal de Filtros */}
         </Modal>
       </ScrollView>
     );

@@ -53,13 +53,18 @@ export function Perfil({ navigation }) {
           } else {
             throw new Error("Documento não encontrado");
           }
+        } catch (err) {
+          console.error("Erro ao carregar usuário: ", err);
+          setError(err.message);
+        }
+        try{
           const imageRef = ref(storage, `userimage/${uid}`);
           const downloadURL = await getDownloadURL(imageRef);
           setImage(downloadURL);
-        } catch (err) {
-          console.error("Erro ao carregar usuário ou imagem: ", err);
-          setError(err.message);
-        } finally {
+          }catch (error){
+            console.log("Erro ao carregar: ", error)
+          }
+         finally {
           setLoading(false);
         }
       });
