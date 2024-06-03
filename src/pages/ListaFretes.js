@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, Pressable, ScrollView } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Image, TextInput, TouchableOpacity, Modal, ScrollView } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, getDoc, doc } from 'firebase/firestore';
 import { getStorage, getDownloadURL, ref } from 'firebase/storage'
+import { Cadastro } from './Cadastro';
+import { CadastroFretes } from './CadastroFretes';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -33,20 +35,6 @@ const firebaseConfig = {
         setLoading(true);
         const userf = auth.currentUser;
         const uid = userf.uid;
-        try {
-          const docRef = doc(db, "users", uid);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            setUser(docSnap.data());
-          } else {
-            console.error("Documento não encontrado");
-            setError("Documento não encontrado");
-          }
-        } catch (err) {
-          console.error("Erro ao carregar usuário: ", err);
-          setError(err.message);
-        }
         try{
           const imageRef = ref(storage, `userimage/${uid}`);
           const downloadURL = await getDownloadURL(imageRef);
@@ -54,9 +42,22 @@ const firebaseConfig = {
           }catch (error){
             console.log("Erro ao carregar: ", error)
           }
-        setLoading(false); 
+          try {
+            const docRef = doc(db, "users", uid);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+              setUser(docSnap.data());
+            } else {
+              console.error("Documento não encontrado");
+              setError("Documento não encontrado");
+            }
+          } catch (err) {
+            console.error("Erro ao carregar usuário: ", err);
+            setError(err.message);
+          }
+          setLoading(false);
       };
-  
       loadUserData();
     }, []);
   
@@ -80,7 +81,7 @@ const firebaseConfig = {
   
 
     if(loading){
-      (
+      return (
         <View style={styles.containerloading}>
           <Text style={styles.nomeempresa}>
             <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
@@ -140,7 +141,7 @@ const firebaseConfig = {
               </TouchableOpacity>
             ))}
           </View>
-          <TouchableOpacity style={styles.botaoAdd} >
+          <TouchableOpacity style={styles.botaoAdd} onPress={() => navigation.navigate('CadastroFretes')}>
             <Text style={styles.textoBotao}>ADICIONAR</Text>
         </TouchableOpacity>
         </View>

@@ -103,6 +103,7 @@ export function Perfil({ navigation }) {
       try {
         await setDoc(doc(db, 'users', uid), user);
         Alert.alert('Perfil atualizado com sucesso');
+        navigation.navigate('ListaFretes')
       } catch (error) {
         console.error('Erro no cadastro ', error);
         Alert.alert('Erro ao cadastrar, tente mais tarde');
@@ -133,9 +134,9 @@ export function Perfil({ navigation }) {
     <View style={styles.container}>
       <StatusBar style="auto" />
       <View style={styles.header}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => navigation.navigate('ListaFretes')}>
-            <Image source={require('../assets/imagens/voltar.png')} style={styles.voltar} />
+            <Image source={require('../assets/imagens/voltar.png')} />
           </TouchableOpacity>
           <Text style={styles.mobyHeader}>  Perfil</Text>
         </View>
