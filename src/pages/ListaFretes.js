@@ -25,13 +25,15 @@ const firebaseConfig = {
     const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedFilters, setSelectedFilters] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [expandedCards, setExpandedCards] = useState([false, false]);
   
     useEffect(() => {
       const loadUserData = async () => {
+        setLoading(true);
+        const userf = auth.currentUser;
+        const uid = userf.uid;
         try {
-          const userf = auth.currentUser;
-          const uid = userf.uid;
           const docRef = doc(db, "users", uid);
           const docSnap = await getDoc(docRef);
           
@@ -48,10 +50,11 @@ const firebaseConfig = {
         try{
           const imageRef = ref(storage, `userimage/${uid}`);
           const downloadURL = await getDownloadURL(imageRef);
-          setUserimage(downloadURL);
+          setUserimg(downloadURL);
           }catch (error){
             console.log("Erro ao carregar: ", error)
           }
+        setLoading(false); 
       };
   
       loadUserData();
@@ -75,8 +78,19 @@ const firebaseConfig = {
       });
     };
   
+
+    if(loading){
+      (
+        <View style={styles.containerloading}>
+          <Text style={styles.nomeempresa}>
+            <Text style={{ color: '#FF7A00' }}>Mooby</Text> Fretes
+          </Text>
+          <Text style={{ textAlign: 'center' }}>O melhor e mais utilizado aplicativo de Fretes do Brasil</Text>
+        </View>
+      );
+    }
     return (
-      <ScrollView>
+      <ScrollView style={{backgroundColor: '#fff'}}>
         <View style={styles.container}>
           <StatusBar style="auto" />
           <View style={styles.header}>
@@ -103,7 +117,7 @@ const firebaseConfig = {
             </View>
             <Text>Foram encontrados 3 fretes.</Text>
   
-            {[0, 1,].map((index) => (
+            {[0, 1].map((index) => (
               <TouchableOpacity key={index} style={[styles.cardfrete, expandedCards[index] && styles.expandedCard]} onPress={() => toggleCardExpansion(index)}>
                 <View>
                   <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
@@ -126,6 +140,9 @@ const firebaseConfig = {
               </TouchableOpacity>
             ))}
           </View>
+          <TouchableOpacity style={styles.botaoAdd} >
+            <Text style={styles.textoBotao}>ADICIONAR</Text>
+        </TouchableOpacity>
         </View>
   
         <Modal
@@ -151,6 +168,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         alignItems: 'center',
+        
 
     },
     containerloading: {
@@ -165,7 +183,7 @@ const styles = StyleSheet.create({
       },
     header: {
         paddingHorizontal: 15,
-        height: 100,
+        height: 115,
         width: '100%',
         backgroundColor: '#2D3F57',
         borderBottomWidth: 10,
@@ -194,7 +212,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     conteudo: {
-        height: 900,
+        height: 'auto',
         width: '100%',
         alignItems: 'center',
     },
@@ -306,7 +324,7 @@ const styles = StyleSheet.create({
         height: 300, // Altura maior para o card expandido
     },
     conteudo: {
-        height: 900,
+        height: 'auto',
         width: '100%',
         alignItems: 'center',
     },
@@ -325,5 +343,19 @@ const styles = StyleSheet.create({
         height: 20,
         width: '90%',
         backgroundColor: '#fff'
-    }
+    },
+    botaoAdd: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 45,
+      width: 170,
+      backgroundColor: '#FF7A00',
+      marginTop: 20,
+      borderRadius: 6,
+    },
+    textoBotao: {
+      color: '#fff',
+      fontWeight: 'bold',
+      fontSize: 23,
+    },
 });
