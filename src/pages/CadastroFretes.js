@@ -34,9 +34,10 @@ export function CadastroFretes({ navigation }) {
         peso: "",
         obs: "",
         pagamento: "",
-      };
+        valor: "",
+    };
 
-    const [frete, setFrete] = useState(initialFreteState);  
+    const [frete, setFrete] = useState(initialFreteState);
     const [user, setUser] = useState(null);
     const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
     const [loading, setLoading] = useState(true);
@@ -75,23 +76,22 @@ export function CadastroFretes({ navigation }) {
 
     const handleInputChange = (name, value) => {
         setFrete(prevState => ({
-          ...prevState,
-          [name]: value,
+            ...prevState,
+            [name]: value,
         }));
-      };
+    };
 
-    const handleAddFrete = async () =>
-        {
-               try {
-                await addDoc(collection(db, 'fretes'), frete);
-                Alert.alert('Frete cadastrado com sucesso');
-                navigation.navigate('ListaFretes')
-              } catch (error) {
-                console.error('Erro no cadastro ', error);
-                Alert.alert('Erro ao Adicionar Frete, tente mais tarde!');
-              }
-            
+    const handleAddFrete = async () => {
+        try {
+            await addDoc(collection(db, 'fretes'), frete);
+            Alert.alert('Frete cadastrado com sucesso');
+            navigation.navigate('ListaFretes')
+        } catch (error) {
+            console.error('Erro no cadastro ', error);
+            Alert.alert('Erro ao Adicionar Frete, tente mais tarde!');
         }
+
+    }
 
 
 
@@ -130,34 +130,34 @@ export function CadastroFretes({ navigation }) {
                         </View>
                     </View>
                     <View style={styles.forms}>
-                    <Text style={styles.textLabel}>Origem</Text>
-                    <TextInput
-                        selectionColor={'#FF7A00'}
-                        style={styles.input}
-                        value={frete.origem}
-                        onChangeText={(text) => handleInputChange('origem', text)}
-                    />
-                    <Text style={styles.textLabel}>Destino</Text>
-                    <TextInput
-                        selectionColor={'#FF7A00'}
-                        style={styles.input}
-                        value={frete.destino}
-                        onChangeText={(text) => handleInputChange('destino', text)}
-                    />
-                    <Text style={styles.textLabel}>Veiculo</Text>
-                    <TextInput
-                        selectionColor={'#FF7A00'}
-                        style={styles.input}
-                        value={frete.veiculo}
-                        onChangeText={(text) => handleInputChange('veiculo', text)}
-                    />
-                    <Text style={styles.textLabel}>Carroceria</Text>
-                    <TextInput
-                        selectionColor={'#FF7A00'}
-                        style={styles.input}
-                        value={frete.carroceria}
-                        onChangeText={(text) => handleInputChange('carroceria', text)}
-                    />
+                        <Text style={styles.textLabel}>Origem</Text>
+                        <TextInput
+                            selectionColor={'#FF7A00'}
+                            style={styles.input}
+                            value={frete.origem}
+                            onChangeText={(text) => handleInputChange('origem', text)}
+                        />
+                        <Text style={styles.textLabel}>Destino</Text>
+                        <TextInput
+                            selectionColor={'#FF7A00'}
+                            style={styles.input}
+                            value={frete.destino}
+                            onChangeText={(text) => handleInputChange('destino', text)}
+                        />
+                        <Text style={styles.textLabel}>Veiculo</Text>
+                        <TextInput
+                            selectionColor={'#FF7A00'}
+                            style={styles.input}
+                            value={frete.veiculo}
+                            onChangeText={(text) => handleInputChange('veiculo', text)}
+                        />
+                        <Text style={styles.textLabel}>Carroceria</Text>
+                        <TextInput
+                            selectionColor={'#FF7A00'}
+                            style={styles.input}
+                            value={frete.carroceria}
+                            onChangeText={(text) => handleInputChange('carroceria', text)}
+                        />
                     </View>
                     <Text style={styles.textLabel}>Produto</Text>
                     <TextInput
@@ -193,6 +193,12 @@ export function CadastroFretes({ navigation }) {
                         style={styles.input}
                         value={frete.pagamento}
                         onChangeText={(text) => handleInputChange('pagamento', text)}
+                    />
+                    <TextInput
+                        selectionColor={'#FF7A00'}
+                        style={styles.input}
+                        value={frete.valor}
+                        onChangeText={(text) => handleInputChange('valor', text)}
                     />
 
                 </View>
@@ -272,15 +278,15 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         fontSize: 15,
         width: '65%',
-      },
-      input: {
+    },
+    input: {
         height: 40,
         marginBottom: 30,
         width: '65%',
         backgroundColor: '#D9D9D9',
         textAlign: 'center',
         borderRadius: 6,
-      },
+    },
     botaoAdd: {
         alignItems: 'center',
         justifyContent: 'center',

@@ -103,7 +103,6 @@ export function Perfil({ navigation }) {
       try {
         await setDoc(doc(db, 'users', uid), user);
         Alert.alert('Perfil atualizado com sucesso');
-        navigation.navigate('ListaFretes')
       } catch (error) {
         console.error('Erro no cadastro ', error);
         Alert.alert('Erro ao cadastrar, tente mais tarde');
