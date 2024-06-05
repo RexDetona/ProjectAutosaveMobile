@@ -82,56 +82,12 @@ export function ListaFretes({ navigation }) {
     });
   };
 
-  const toggleCardExpansion = (item) => {
-    setExpandedCards(prevExpanded => {
-      const newExpanded = [...prevExpanded];
-      newExpanded[item] = !newExpanded[item];
-      return newExpanded;
-    });
+  const toggleCardExpansion = (id) => {
+    setExpandedCards((prevExpandedCards) => ({
+      ...prevExpandedCards,
+      [id]: !prevExpandedCards[id]
+    }));
   };
-
-  const renderFrete = ({ index }) => (
-    <TouchableOpacity key={index} style={[styles.cardfrete, expandedCards[index] && styles.expandedCard]} onPress={() => toggleCardExpansion(index)}>
-      <View>
-        <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
-        <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
-      </View>
-      <View style={{ flex: 1 }}>
-        <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: {index.origem}</Text>
-        <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: {index.destino}</Text>
-
-        {expandedCards[index] && (
-          <View style={styles.cardexp}>
-            <View>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Veiculo</Text>
-              <Text style={{ fontSize: 11 }}>{index.veiculo}</Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
-              <Text style={{ fontSize: 11 }}>{index.carroceria}</Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
-              <Text style={{ fontSize: 11 }}>{index.produto}</Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
-              <Text style={{ fontSize: 11 }}>{index.distancia}</Text>
-            </View>
-
-            <View>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
-              <Text style={{ fontSize: 11 }}></Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
-              <Text style={{ fontSize: 11 }}>{index.peso}</Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
-              <Text style={{ fontSize: 11 }}>{index.obs}</Text>
-              <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamento</Text>
-              <Text style={{ fontSize: 11 }}>{index.pagamento}</Text>
-            </View>
-          </View>
-        )}
-      </View>
-      <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-        <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ {index.valor}</Text>
-      </View>
-    </TouchableOpacity>
-  );
-
 
   if (loading) {
     return (
@@ -171,9 +127,58 @@ export function ListaFretes({ navigation }) {
           </View>
           <Text>Foram encontrados {fretes.length} fretes.</Text>
 
-          <SafeAreaView style={{flex: 1}}>
-          <FlatList data={fretes} renderItem={renderFrete} keyExtractor={index => index.id}/>
-          </SafeAreaView>
+
+          {fretes.map(item => (
+            <TouchableOpacity key={item.id} style={[styles.cardfrete, expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
+              <View>
+                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
+                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: {item.origem}</Text>
+                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: {item.destino}</Text>
+
+                {expandedCards[item.id] && (
+                  <View style={styles.cardexp}>
+                    <View>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Veiculo</Text>
+                      <Text style={{ fontSize: 11 }}>{item.veiculo}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
+                      <Text style={{ fontSize: 11 }}>{item.carroceria}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
+                      <Text style={{ fontSize: 11 }}>{item.produto}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
+                      <Text style={{ fontSize: 11 }}>{item.distancia}</Text>
+                    </View>
+
+                    <View>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
+                      <Text style={{ fontSize: 11 }}></Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
+                      <Text style={{ fontSize: 11 }}>{item.peso}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
+                      <Text style={{ fontSize: 11 }}>{item.obs}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamento</Text>
+                      <Text style={{ fontSize: 11 }}>{item.pagamento}</Text>
+                    </View>
+                    <View>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Lona</Text>
+                      <Text style={{ fontSize: 11 }}>NÃO</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pedágio</Text>
+                      <Text style={{ fontSize: 11 }}>SIM</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Rastreamento</Text>
+                      <Text style={{ fontSize: 11 }}>NÃO</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Agenciamento</Text>
+                      <Text style={{ fontSize: 11 }}>NÃO</Text>
+                    </View>
+                  </View>
+                )}
+              </View>
+              <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ {item.valor}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
 
         </View>
         <TouchableOpacity style={styles.botaoAdd} onPress={() => navigation.navigate('CadastroFretes')}>
