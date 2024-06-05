@@ -194,6 +194,7 @@ export function CadastroFretes({ navigation }) {
                         value={frete.pagamento}
                         onChangeText={(text) => handleInputChange('pagamento', text)}
                     />
+                    <Text style={styles.textLabel}>valor</Text>
                     <TextInput
                         selectionColor={'#FF7A00'}
                         style={styles.input}

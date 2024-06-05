@@ -72,15 +72,6 @@ export function ListaFretes({ navigation }) {
     loadUserData();
   }, []);
 
-  const toggleFilter = (filter) => {
-    setSelectedFilters(prevFilters => {
-      if (prevFilters.includes(filter)) {
-        return prevFilters.filter(item => item !== filter);
-      } else {
-        return [...prevFilters, filter];
-      }
-    });
-  };
 
   const toggleCardExpansion = (id) => {
     setExpandedCards((prevExpandedCards) => ({
@@ -128,7 +119,7 @@ export function ListaFretes({ navigation }) {
           <Text>Foram encontrados {fretes.length} fretes.</Text>
 
 
-          {fretes.map(item => (
+          {fretes.map(item  => (
             <TouchableOpacity key={item.id} style={[styles.cardfrete, expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
               <View>
                 <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
@@ -148,17 +139,17 @@ export function ListaFretes({ navigation }) {
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
                       <Text style={{ fontSize: 11 }}>{item.produto}</Text>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
-                      <Text style={{ fontSize: 11 }}>{item.distancia}</Text>
+                      <Text style={{ fontSize: 11 }}>{item.distancia} KM</Text>
                     </View>
 
                     <View>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
                       <Text style={{ fontSize: 11 }}></Text>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
-                      <Text style={{ fontSize: 11 }}>{item.peso}</Text>
+                      <Text style={{ fontSize: 11 }}>{item.peso} KG</Text>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
                       <Text style={{ fontSize: 11 }}>{item.obs}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamento</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamentos</Text>
                       <Text style={{ fontSize: 11 }}>{item.pagamento}</Text>
                     </View>
                     <View>
@@ -362,7 +353,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   expandedCard: {
-    height: 300, // Altura maior para o card expandido
+    height: 250,
   },
   conteudo: {
     height: 'auto',
@@ -378,12 +369,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 20,
-  },
-  barra: {
-    height: 20,
-    width: '90%',
-    backgroundColor: '#fff'
+    gap: 30,
   },
   botaoAdd: {
     alignItems: 'center',
@@ -391,7 +377,7 @@ const styles = StyleSheet.create({
     height: 45,
     width: 170,
     backgroundColor: '#FF7A00',
-    marginTop: 20,
+    marginVertical: 20,
     borderRadius: 6,
   },
   textoBotao: {
