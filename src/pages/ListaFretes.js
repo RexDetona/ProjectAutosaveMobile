@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore, getDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { getStorage, getDownloadURL, ref } from 'firebase/storage'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { set } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
@@ -80,6 +81,20 @@ export function ListaFretes({ navigation }) {
     }));
   };
 
+  const reloadData = async () => {
+    try{
+      const querySnapshot = await getDocs(collection(db, "fretes"));
+      const fretesList = [];
+      querySnapshot.forEach((doc) => {
+        fretesList.push({ id: doc.id, ...doc.data() });
+      });
+      setFretes(fretesList)
+    }catch(err){
+      console.log('Falha ao recarregar! ', err)
+    }
+  }
+
+
   if (loading) {
     return (
       <View style={styles.containerloading}>
@@ -112,8 +127,8 @@ export function ListaFretes({ navigation }) {
           <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
           <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
           <View style={styles.containerfiltro}>
-            <TouchableOpacity style={styles.botaofiltro} onPress={() => setModalVisible(true)}>
-              <Text>Filtros <Image source={require('../assets/imagens/filtro.png')} style={styles.imagemfiltro} /></Text>
+            <TouchableOpacity style={styles.botaofiltro} onPress={reloadData}>
+              <Text>Recarregar</Text>
             </TouchableOpacity>
           </View>
           <Text>Foram encontrados {fretes.length} fretes.</Text>
