@@ -27,7 +27,7 @@ export function ListaFretes({ navigation }) {
   const [fretes, setFretes] = useState([]);
   const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [search, setSearch] = useState("")
   const [loading, setLoading] = useState(true);
   const [expandedCards, setExpandedCards] = useState([false, false]);
 
@@ -82,14 +82,14 @@ export function ListaFretes({ navigation }) {
   };
 
   const reloadData = async () => {
-    try{
+    try {
       const querySnapshot = await getDocs(collection(db, "fretes"));
       const fretesList = [];
       querySnapshot.forEach((doc) => {
         fretesList.push({ id: doc.id, ...doc.data() });
       });
       setFretes(fretesList)
-    }catch(err){
+    } catch (err) {
       console.log('Falha ao recarregar! ', err)
     }
   }
@@ -134,16 +134,20 @@ export function ListaFretes({ navigation }) {
           <Text>Foram encontrados {fretes.length} fretes.</Text>
 
 
-          {fretes.map(item  => (
-            <TouchableOpacity key={item.id} style={[styles.cardfrete, expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
+          {fretes.map(item => (
+            <TouchableOpacity key={item.id} style={[expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
+              <View style={styles.cardfrete}>
               <View>
                 <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
                 <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>De: {item.origem}</Text>
-                <Text style={{ fontSize: 12, paddingBottom: 23, marginLeft: 10 }}>Para: {item.destino}</Text>
-
+                <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>De: {item.origem}</Text>
+                <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>Para: {item.destino}</Text>
+                <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                  <Text style={{fontWeight: 'bold', fontSize: 20 }}>R$ {item.valor}</Text>
+                </View>
+                </View>
+              
                 {expandedCards[item.id] && (
                   <View style={styles.cardexp}>
                     <View>
@@ -179,10 +183,8 @@ export function ListaFretes({ navigation }) {
                     </View>
                   </View>
                 )}
-              </View>
-              <View style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 20 }}>R$ {item.valor}</Text>
-              </View>
+              
+
             </TouchableOpacity>
           ))}
 
@@ -286,6 +288,7 @@ const styles = StyleSheet.create({
     width: 90,
     height: 30,
     alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
     marginBottom: 30,
   },
@@ -309,82 +312,17 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 5,
   },
-  cardbotao: {
-    backgroundColor: '#FF7A00',
-    width: 90,
-    height: 23,
-    borderRadius: 5,
-  },
-  cardbottext: {
-    color: 'white',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 22,
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  filterButton: {
-    backgroundColor: '#2D3F57',
-    borderRadius: 5,
-    padding: 10,
-    marginVertical: 5,
-    width: 150,
-    alignItems: 'center',
-  },
-  filterButtonSelected: {
-    backgroundColor: '#FF7A00',
-  },
-  filterButtonClose: {
-    backgroundColor: '#FF0000',
-  },
-  filterButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    fontSize: 16,
-  },
   expandedCard: {
-    height: 250,
-  },
-  conteudo: {
     height: 'auto',
-    width: '100%',
-    alignItems: 'center',
   },
-  scrollView: {
-    flexGrow: 1,
-  },
+
   cardexp: {
     paddingTop: 10,
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     flexDirection: 'row',
-    gap: 30,
+    justifyContent: 'space-between',
+    gap: 10,
+
   },
   botaoAdd: {
     alignItems: 'center',
