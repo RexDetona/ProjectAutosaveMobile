@@ -28,7 +28,7 @@ export function ListaFretes({ navigation }) {
   const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState("")
-  const [searchParam] = useState(["origem", "destino"])
+  const [searchParam] = useState(["origem", "destino", "veiculo", "carroceria", "produto", "obs", "pagamento"])
   const [loading, setLoading] = useState(true);
   const [expandedCards, setExpandedCards] = useState([false, false]);
 
