@@ -28,6 +28,7 @@ export function ListaFretes({ navigation }) {
   const [userimg, setUserimg] = useState('https://cdn-icons-png.flaticon.com/512/149/149071.png');
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState("")
+  const [searchParam] = useState(["origem", "destino"])
   const [loading, setLoading] = useState(true);
   const [expandedCards, setExpandedCards] = useState([false, false]);
 
@@ -95,6 +96,13 @@ export function ListaFretes({ navigation }) {
   }
 
 
+function busca(fretes){
+   return fretes.filter((item) => {
+    return searchParam.some((newItem) => {
+      return (item[newItem].toString()?.toLowerCase()?.indexOf(search.toLowerCase()) > -1)})
+  })
+}
+
   if (loading) {
     return (
       <View style={styles.containerloading}>
@@ -125,17 +133,18 @@ export function ListaFretes({ navigation }) {
         </View>
         <View style={styles.conteudo}>
           <Text style={styles.tituloconteudo}><Text style={{ color: '#FF7A00' }}>Fretes</Text> Disponíveis</Text>
-          <TextInput selectionColor={'#FF7A00'} style={styles.input} placeholder='Pesquise aqui'></TextInput>
+          <TextInput value={search} selectionColor={'#FF7A00'} onChangeText={(value) => setSearch(value)} style={styles.input} placeholder='Pesquise aqui'></TextInput>
           <View style={styles.containerfiltro}>
             <TouchableOpacity style={styles.botaofiltro} onPress={reloadData}>
               <Text>Recarregar</Text>
             </TouchableOpacity>
           </View>
-          <Text>Foram encontrados {fretes.length} fretes.</Text>
+          <Text>Foram encontrados {busca(fretes).length} fretes.</Text>
 
 
-          {fretes.map(item => (
-            <TouchableOpacity key={item.id} style={[expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
+
+           {busca(fretes).map(item => (
+            <TouchableOpacity key={item.id} style={[styles.botfrete, expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
               <View style={styles.cardfrete}>
               <View>
                 <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
@@ -143,7 +152,7 @@ export function ListaFretes({ navigation }) {
               </View>
                 <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>De: {item.origem}</Text>
                 <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>Para: {item.destino}</Text>
-                <View style={{ justifyContent: 'space-between', alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+                <View style={{alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                   <Text style={{fontWeight: 'bold', fontSize: 20 }}>R$ {item.valor}</Text>
                 </View>
                 </View>
@@ -296,16 +305,18 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
+  botfrete: {
+ height: 115,
+ backgroundColor: '#E1E1F7',
+ marginTop: 15,
+ borderRadius: 5,
+ padding: 10,
+ width: '90%',
+  },
   cardfrete: {
     display: 'flex',
     flexDirection: 'row',
-    width: '90%',
-    height: 115,
-    backgroundColor: '#E1E1F7',
-    padding: 10,
-    borderRadius: 5,
     justifyContent: 'space-around',
-    marginTop: 15,
   },
   imgcard: {
     width: 100,
