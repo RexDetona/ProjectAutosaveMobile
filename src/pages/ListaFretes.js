@@ -4,8 +4,6 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, getDoc, doc, getDocs, collection } from 'firebase/firestore';
 import { getStorage, getDownloadURL, ref } from 'firebase/storage'
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { set } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
