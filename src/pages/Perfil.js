@@ -6,7 +6,6 @@ import { getFirestore, setDoc, doc, onSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-
 const firebaseConfig = {
   apiKey: "AIzaSyDbHoj6ITNs-4sxl79aMYMyahjOadBovmQ",
   authDomain: "mobby-fretes.firebaseapp.com",
@@ -29,10 +28,10 @@ const initialUserState = {
   telefone: "",
   estado: "",
   cidade: "",
-  numCnh: "",
-  categoriaCnh: "",
-  dataEmissao: "",
-  estadoExpedidor: "",
+  num_cnh: "",
+  categoria_cnh: "",
+  data_emissao: "",
+  estado_expeditor: "",
 };
 
 export function Perfil({ navigation }) {
@@ -57,14 +56,13 @@ export function Perfil({ navigation }) {
           console.error("Erro ao carregar usuário: ", err);
           setError(err.message);
         }
-        try{
+        try {
           const imageRef = ref(storage, `userimage/${uid}`);
           const downloadURL = await getDownloadURL(imageRef);
           setImage(downloadURL);
-          }catch (error){
-            console.log("Erro ao carregar: ", error)
-          }
-         finally {
+        } catch (error) {
+          console.log("Erro ao carregar imagem: ", error);
+        } finally {
           setLoading(false);
         }
       });
