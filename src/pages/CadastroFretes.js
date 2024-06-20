@@ -166,14 +166,14 @@ export function CadastroFretes({ navigation }) {
                         value={frete.produto}
                         onChangeText={(text) => handleInputChange('produto', text)}
                     />
-                    <Text style={styles.textLabel}>Distância</Text>
+                    <Text style={styles.textLabel}>Distância em KM</Text>
                     <TextInput
                         selectionColor={'#FF7A00'}
                         style={styles.input}
                         value={frete.distancia}
                         onChangeText={(text) => handleInputChange('distancia', text)}
                     />
-                    <Text style={styles.textLabel}>Peso da Carga</Text>
+                    <Text style={styles.textLabel}>Peso da Carga em KG</Text>
                     <TextInput
                         selectionColor={'#FF7A00'}
                         style={styles.input}
@@ -187,14 +187,14 @@ export function CadastroFretes({ navigation }) {
                         value={frete.obs}
                         onChangeText={(text) => handleInputChange('obs', text)}
                     />
-                    <Text style={styles.textLabel}>Pagamento</Text>
+                    <Text style={styles.textLabel}>Tipo de Pagamento</Text>
                     <TextInput
                         selectionColor={'#FF7A00'}
                         style={styles.input}
                         value={frete.pagamento}
                         onChangeText={(text) => handleInputChange('pagamento', text)}
                     />
-                    <Text style={styles.textLabel}>valor</Text>
+                    <Text style={styles.textLabel}>valor em R$</Text>
                     <TextInput
                         selectionColor={'#FF7A00'}
                         style={styles.input}

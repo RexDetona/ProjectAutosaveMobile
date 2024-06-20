@@ -164,7 +164,7 @@ function busca(fretes){
                       <Text style={{ fontSize: 11 }}>{item.carroceria}</Text>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
                       <Text style={{ fontSize: 11 }}>{item.produto}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>KM</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>distancia</Text>
                       <Text style={{ fontSize: 11 }}>{item.distancia} KM</Text>
                     </View>
 
@@ -175,7 +175,7 @@ function busca(fretes){
                       <Text style={{ fontSize: 11 }}>{item.peso} KG</Text>
                       <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
                       <Text style={{ fontSize: 11 }}>{item.obs}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pagamentos</Text>
+                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Tipo de pagamento</Text>
                       <Text style={{ fontSize: 11 }}>{item.pagamento}</Text>
                     </View>
                     <View>
