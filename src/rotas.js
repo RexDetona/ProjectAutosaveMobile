@@ -9,6 +9,7 @@ import { Cadastro3 } from './pages/Cadastro_3';
 import { ListaFretes } from './pages/ListaFretes';
 import { Perfil } from './pages/Perfil';
 import { CadastroFretes } from './pages/CadastroFretes';
+import { CadastroEmpresa } from './pages/CadastroEmpresa';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function Rotas() {
         <Stack.Screen name="Cadastro3" component={Cadastro3} />
         <Stack.Screen name="ListaFretes" component={ListaFretes} />
         <Stack.Screen name="CadastroFretes" component={CadastroFretes} />
+        <Stack.Screen name="CadastroEmpresa" component={CadastroEmpresa} />
         <Stack.Screen name="Perfil" component={Perfil} />
       </Stack.Navigator>
     </NavigationContainer>

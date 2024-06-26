@@ -20,7 +20,7 @@ export function Login({ navigation }) {
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [disableButtons, setDisableButtons] = useState(true); // Estado para desabilitar os botões
+  const [disableButtons, setDisableButtons] = useState(false); // Estado para desabilitar os botões
   const [errorMessage, setErrorMessage] = useState(''); // Estado para mensagem de erro
 
   useEffect(() => {
@@ -153,7 +153,7 @@ export function Login({ navigation }) {
                 <Text style={styles.botfretestexto}>Procuro</Text>
                 <Text style={styles.botfretestexto}>Fretes</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.botaocadastro, disableButtons && styles.disabledButton]} disabled={disableButtons}>
+              <TouchableOpacity style={[styles.botaocadastro]} onPress={() => navigation.navigate('CadastroEmpresa')}>
                 <Text style={styles.botfretestexto}>Cadastrar</Text>
                 <Text style={styles.botfretestexto}>Fretes</Text>
               </TouchableOpacity>
