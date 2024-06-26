@@ -35,44 +35,53 @@ export function ListaFretes({ navigation }) {
       setLoading(true);
       const userf = auth.currentUser;
       const uid = userf.uid;
+      let docSnap;
+  
       try {
         const imageRef = ref(storage, `userimage/${uid}`);
         const downloadURL = await getDownloadURL(imageRef);
         setUserimg(downloadURL);
       } catch (error) {
-        console.log("Erro ao carregar: ", error)
+        console.log("Erro ao carregar imagem: ", error);
       }
+  
       try {
-        const docRef = doc(db, "users", uid);
-        const docSnap = await getDoc(docRef);
+        // Tenta carregar o documento da coleção "users"
+        let docRef = doc(db, "users", uid);
+        docSnap = await getDoc(docRef);
+  
+        if (!docSnap.exists()) {
+          // Se não existir na coleção "users", tenta carregar da coleção "empresas"
+          docRef = doc(db, "empresas", uid);
+          docSnap = await getDoc(docRef);
 
-        if (docSnap.exists()) {
-          setUser(docSnap.data());
+          if (docSnap.exists()) {
+            setUser({ ...docSnap.data(), isEmpresa: true });
+          }
         } else {
-          console.error("Documento não encontrado");
-          setError("Documento não encontrado");
+          setUser({ ...docSnap.data(), isEmpresa: false });
         }
       } catch (err) {
         console.error("Erro ao carregar usuário: ", err);
         setError(err.message);
       }
+  
       try {
         const querySnapshot = await getDocs(collection(db, "fretes"));
         const fretesList = [];
         querySnapshot.forEach((doc) => {
           fretesList.push({ id: doc.id, ...doc.data() });
         });
-        setFretes(fretesList)
-
+        setFretes(fretesList);
       } catch (err) {
-        console.log('Erro ao carregar documentos')
+        console.log('Erro ao carregar documentos');
       }
+  
       setLoading(false);
     };
     loadUserData();
   }, []);
-
-
+  
   const toggleCardExpansion = (id) => {
     setExpandedCards((prevExpandedCards) => ({
       ...prevExpandedCards,
@@ -93,13 +102,12 @@ export function ListaFretes({ navigation }) {
     }
   }
 
-
-function busca(fretes){
-   return fretes.filter((item) => {
-    return searchParam.some((newItem) => {
-      return (item[newItem].toString()?.toLowerCase()?.indexOf(search.toLowerCase()) > -1)})
-  })
-}
+  function busca(fretes){
+    return fretes.filter((item) => {
+      return searchParam.some((newItem) => {
+        return (item[newItem].toString()?.toLowerCase()?.indexOf(search.toLowerCase()) > -1)})
+    })
+  }
 
   if (loading) {
     return (
@@ -111,6 +119,7 @@ function busca(fretes){
       </View>
     );
   }
+
   return (
     <ScrollView style={{ backgroundColor: '#fff' }}>
       <View style={styles.container}>
@@ -139,66 +148,64 @@ function busca(fretes){
           </View>
           <Text>Foram encontrados {busca(fretes).length} fretes.</Text>
 
-
-
-           {busca(fretes).map(item => (
+          {busca(fretes).map(item => (
             <TouchableOpacity key={item.id} style={[styles.botfrete, expandedCards[item.id] && styles.expandedCard]} onPress={() => toggleCardExpansion(item.id)}>
               <View style={styles.cardfrete}>
-              <View>
-                <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
-                <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
-              </View>
+                <View>
+                  <Image source={require('../assets/imagens/cardimg1.png')} style={styles.imgcard} />
+                  <Text style={{ fontSize: 11, textAlign: 'center', marginTop: 5 }}>Lançado a 2 horas.</Text>
+                </View>
                 <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>De: {item.origem}</Text>
                 <Text style={{ fontSize: 12, paddingBottom: 20, marginLeft: 10 }}>Para: {item.destino}</Text>
                 <View style={{alignItems: 'flex-end', justifyContent: 'flex-end' }}>
                   <Text style={{fontWeight: 'bold', fontSize: 20 }}>R$ {item.valor}</Text>
                 </View>
-                </View>
+              </View>
               
-                {expandedCards[item.id] && (
-                  <View style={styles.cardexp}>
-                    <View>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Veiculo</Text>
-                      <Text style={{ fontSize: 11 }}>{item.veiculo}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
-                      <Text style={{ fontSize: 11 }}>{item.carroceria}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
-                      <Text style={{ fontSize: 11 }}>{item.produto}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>distancia</Text>
-                      <Text style={{ fontSize: 11 }}>{item.distancia} KM</Text>
-                    </View>
-
-                    <View>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}></Text>
-                      <Text style={{ fontSize: 11 }}></Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
-                      <Text style={{ fontSize: 11 }}>{item.peso} KG</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
-                      <Text style={{ fontSize: 11 }}>{item.obs}</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Tipo de pagamento</Text>
-                      <Text style={{ fontSize: 11 }}>{item.pagamento}</Text>
-                    </View>
-                    <View>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Lona</Text>
-                      <Text style={{ fontSize: 11 }}>NÃO</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pedágio</Text>
-                      <Text style={{ fontSize: 11 }}>SIM</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Rastreamento</Text>
-                      <Text style={{ fontSize: 11 }}>NÃO</Text>
-                      <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Agenciamento</Text>
-                      <Text style={{ fontSize: 11 }}>NÃO</Text>
-                    </View>
+              {expandedCards[item.id] && (
+                <View style={styles.cardexp}>
+                  <View>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Veiculo</Text>
+                    <Text style={{ fontSize: 11 }}>{item.veiculo}</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Carroceria</Text>
+                    <Text style={{ fontSize: 11 }}>{item.carroceria}</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Produto</Text>
+                    <Text style={{ fontSize: 11 }}>{item.produto}</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Distância</Text>
+                    <Text style={{ fontSize: 11 }}>{item.distancia} KM</Text>
                   </View>
-                )}
-              
 
+                  <View>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Peso de carga</Text>
+                    <Text style={{ fontSize: 11 }}>{item.peso} KG</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Obs</Text>
+                    <Text style={{ fontSize: 11 }}>{item.obs}</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Tipo de pagamento</Text>
+                    <Text style={{ fontSize: 11 }}>{item.pagamento}</Text>
+                  </View>
+
+                  <View>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Lona</Text>
+                    <Text style={{ fontSize: 11 }}>NÃO</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Pedágio</Text>
+                    <Text style={{ fontSize: 11 }}>SIM</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Rastreamento</Text>
+                    <Text style={{ fontSize: 11 }}>NÃO</Text>
+                    <Text style={{ fontSize: 12, fontWeight: 'bold' }}>Agenciamento</Text>
+                    <Text style={{ fontSize: 11 }}>NÃO</Text>
+                  </View>
+                </View>
+              )}
             </TouchableOpacity>
           ))}
 
         </View>
-        <TouchableOpacity style={styles.botaoAdd} onPress={() => navigation.navigate('CadastroFretes')}>
-          <Text style={styles.textoBotao}>ADICIONAR</Text>
-        </TouchableOpacity>
+
+        {user?.isEmpresa && (
+          <TouchableOpacity style={styles.botaoAdd} onPress={() => navigation.navigate('CadastroFretes')}>
+            <Text style={styles.textoBotao}>ADICIONAR</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <Modal
@@ -211,6 +218,7 @@ function busca(fretes){
     </ScrollView>
   );
 }
+
 
 
 

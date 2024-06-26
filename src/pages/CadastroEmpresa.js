@@ -46,7 +46,7 @@ export function CadastroEmpresa({ navigation }) {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-
+  
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -66,18 +66,18 @@ export function CadastroEmpresa({ navigation }) {
       let errorMessage = 'Erro ao Cadastrar.';
   
       if (error.code === 'auth/email-already-in-use') {
-        Alert.alert(
-          'Erro',
-          'O email já está em uso. Por favor, tente com outro email.'
-        );
-      } else {
-        Alert.alert('Erro', 'Erro ao criar conta. Tente novamente mais tarde.');
+        errorMessage = 'O email já está em uso. Por favor, tente com outro email.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email inválido. Por favor, insira um email válido.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Senha fraca. Por favor, insira uma senha com no mínimo 6 caracteres.';
       }
   
       Alert.alert('Erro', errorMessage);
+      console.error('Erro ao criar conta:', error);
     }
-
   };
+  
 
   
 
